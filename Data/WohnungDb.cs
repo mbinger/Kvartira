@@ -12,7 +12,7 @@ namespace Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite($"Filename={AppConfig.Database}");
+            optionsBuilder.UseSqlite($"Filename={AppConfig.DatabaseFile}");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
