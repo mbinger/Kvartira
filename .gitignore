@@ -255,3 +255,7 @@ ModelManifest.xml
 *.ncrunchproject
 *.ncrunchsolution
 /WohnungDb.sqlite
+
+Download/
+Log/
+/Logs/log.txt

@@ -19,6 +19,8 @@ namespace Common
             try
             {
                 var logItem = $"[{DateTime.Now.ToString("dd.MM.yyyy hh:mm:ss")}] {str}";
+                Console.WriteLine(logItem);
+                Debug.WriteLine(logItem);
                 await File.AppendAllLinesAsync(appConfig.LogFile, new[] { logItem });
             }
             catch (Exception ex)

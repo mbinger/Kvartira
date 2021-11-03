@@ -1,23 +1,14 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using Common;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace Data
+namespace Providers
 {
-    public class WohnungDetails
+    public class WohnungCard
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-
-        [ForeignKey("WohnungHeader")]
-        public int WohnungHeaderId { get; set; }
-        public virtual WohnungHeader WohnungHeader { get; set; }
-
-        [StringLength(256)]
         public string Bezirk { get; set; }
 
-        [StringLength(512)]
         public string Anschrift { get; set; }
 
         public decimal? MieteKalt { get; set; }
@@ -34,7 +25,6 @@ namespace Data
 
         public DateTime? FreiAb { get; set; }
 
-        [StringLength(1024)]
         public string Beschreibung { get; set; }
 
         public bool? Wbs { get; set; }
@@ -42,5 +32,18 @@ namespace Data
         public bool? Balkon { get; set; }
 
         public bool? Keller { get; set; }
+    }
+
+    public class LoadIdsResult
+    {
+        public int PagesCount { get; set; }
+        public List<string> WohnungIds { get; set; } = new List<string>();
+    }
+
+    public interface IProvider
+    {
+        public string Name { get; }
+        public Task<LoadIdsResult> LoadIdsAsync(Search config);
+        public Task<WohnungCard> LoadDetailsAsync(string wohnungId);
     }
 }

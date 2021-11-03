@@ -7,8 +7,8 @@ namespace Data
     {
         public static AppConfig AppConfig;
 
-        public virtual DbSet<WohnungHeader> WohnungHeaders { get; set; }
-        public virtual DbSet<WohnungDetails> WohnungDetails { get; set; }
+        public virtual DbSet<WohnungHeaderEntity> WohnungHeaders { get; set; }
+        public virtual DbSet<WohnungDetailsEntity> WohnungDetails { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -17,7 +17,7 @@ namespace Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<WohnungHeader>().HasIndex(p => new { p.Provider, p.WohnungId }).IsUnique();
+            modelBuilder.Entity<WohnungHeaderEntity>().HasIndex(p => new { p.Provider, p.WohnungId }).IsUnique();
         }
     }
 }

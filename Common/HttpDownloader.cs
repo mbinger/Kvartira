@@ -1,25 +1,23 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Common
 {
-    public class Downloader
+    public class HttpDownloader: IDownloader
     {
         private readonly Log log;
         private readonly AppConfig appConfig;
         private string userAgent;
         private CookieContainer cookieContainer;
+        private Random random;
 
-        public Downloader(Log log, AppConfig appConfig)
+        public HttpDownloader(Log log, AppConfig appConfig)
         {
             this.log = log;
             this.appConfig = appConfig;
+            random = new Random();
         }
 
         private void Setup()
@@ -34,19 +32,16 @@ namespace Common
                 }
                 else
                 {
-                    var rnd = new Random();
-                    var index = rnd.Next(0, count - 1);
+                    var index = random.Next(0, count - 1);
                     userAgent = appConfig.UserAgents[index];
                 }
             }
         }
 
-        public class Response
+        public Task Delay()
         {
-            public string Url { get; set; }
-            public string Exception { get; set; }
-            public int HttpStatusCode { get; set; }
-            public string Content { get; set; }
+            var delay = random.Next(1000, 3000);
+            return Task.Delay(delay);
         }
 
         public async Task<Response> GetAsync(string url, string description)
@@ -83,40 +78,9 @@ namespace Common
                 result.Exception = ex.ToString();
             }
 
-            await Dump(result, description);
+            await DumpDownloader.WriteDumpAsync(appConfig, log, result, description);
 
             return result;
-        }
-
-        private async Task Dump(Response resp, string description)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(appConfig.DumpFolder))
-                {
-                    return;
-                }
-
-                var fileName = $"{DateTime.Now.ToString("yyyy_MM_dd_hh_mm_ss")}_{description}.txt";
-                var path = Path.Combine(appConfig.DumpFolder, fileName);
-
-                if (!Directory.Exists(appConfig.DumpFolder))
-                {
-                    Directory.CreateDirectory(appConfig.DumpFolder);
-                }
-
-                var content = new StringBuilder();
-                content.AppendLine(resp.Url);
-                content.AppendLine(resp.HttpStatusCode.ToString());
-                content.AppendLine(resp.Exception?.Replace("\n", "")?.Replace("\r", ""));
-                content.AppendLine(resp.Content);
-
-                await File.WriteAllTextAsync(path, content.ToString());
-            }
-            catch (Exception ex)
-            {
-                await log.LogAsync($"Error dumping content\n {ex}");
-            }
         }
     }
 }
