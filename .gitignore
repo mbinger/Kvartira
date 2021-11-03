@@ -254,3 +254,4 @@ ModelManifest.xml
 **/BuildDrop/
 *.ncrunchproject
 *.ncrunchsolution
+/WohnungDb.sqlite
