@@ -80,5 +80,18 @@ namespace Providers
 
             return result;
         }
+
+        public string GetOpenDetailsUrl(string providerName, string wohnungId)
+        {
+            foreach (var provider in providers)
+            {
+                if (string.Compare(provider.Name, providerName, true) == 0)
+                {
+                    return provider.GetOpenDetailsUrl(wohnungId);
+                }
+            }
+
+            return null;
+        }
     }
 }

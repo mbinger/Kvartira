@@ -9,6 +9,8 @@ namespace Common
         public string DumpFolder { get; set; }
         public string [] UserAgents { get; set; }
         public List<Search> SearchConfig { get; set; }
+        public int PoolingIntervalMin { get; set; }
+        public int PoolingIntervalMax { get; set; }
     }
 
     public class Search

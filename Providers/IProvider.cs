@@ -45,5 +45,6 @@ namespace Providers
         public string Name { get; }
         public Task<LoadIdsResult> LoadIdsAsync(Search config);
         public Task<WohnungCard> LoadDetailsAsync(string wohnungId);
+        public string GetOpenDetailsUrl(string wohnungId);
     }
 }

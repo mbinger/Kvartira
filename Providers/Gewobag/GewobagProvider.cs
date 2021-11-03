@@ -9,6 +9,7 @@ namespace Providers.Gewobag
     public class GewobagProvider : IProvider
     {
         public string Name => "GEWOBAG";
+        public const string DetailsUrl = "https://www.gewobag.de/fuer-mieter-und-mietinteressenten/mietangebote/{0}/";
 
         private readonly IDownloader downloader;
         private readonly Log log;
@@ -74,6 +75,11 @@ namespace Providers.Gewobag
             result.PagesCount += nextPageResult.PagesCount;
 
             return result;
+        }
+
+        public string GetOpenDetailsUrl(string wohnungId)
+        {
+            return string.Format(DetailsUrl, wohnungId);
         }
 
         public Task<WohnungCard> LoadDetailsAsync(string wohnungId)
