@@ -14,9 +14,11 @@ namespace Common
     public class Search
     {
         public string ProviderName { get; set; }
-        public string Description { get; set; }
+        public string DescriptionShort { get; set; }
+        public string DescriptionLong { get; set; }
         public string SearchUrl { get; set; }
-        public bool DreamApartment{ get; set; }
+        public int Importance { get; set; }
         public bool Active { get; set; }
+        public bool Test { get; set; }
     }
 }

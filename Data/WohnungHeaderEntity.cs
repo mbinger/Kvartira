@@ -20,8 +20,14 @@ namespace Data
         [StringLength(256)]
         public string WohnungId { get; set; }
 
-        public bool TraumWohnung { get; set; }
-        
+        public int Wichtigkeit { get; set; }
+
+        [StringLength(256)]
+        public string SucheShort { get; set; }
+
+        [StringLength(1024)]
+        public string SucheDetails { get; set; }
+
         public DateTime? Gesehen { get; set; }
 
         public DateTime? Gemeldet { get; set; }

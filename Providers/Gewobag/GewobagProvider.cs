@@ -21,11 +21,13 @@ namespace Providers.Gewobag
 
         public Task<LoadIdsResult> LoadIdsAsync(Search search)
         {
-            return LoadIdsPrivateAsync(search.SearchUrl, search.Description, 1);
+            return LoadIdsPrivateAsync(search.SearchUrl, search.DescriptionShort, 1);
         }
 
         private async Task<LoadIdsResult> LoadIdsPrivateAsync(string url, string description, int page)
         {
+            await downloader.Delay();
+
             var content = await downloader.GetAsync(url, Name + "_" + description + $" page {page}");
 
             await log.LogAsync($"{Name} {description} GET page {page} {url} HTTP {content.HttpStatusCode} {content.Exception}");
@@ -63,6 +65,8 @@ namespace Providers.Gewobag
 
             //load next page
             var nextPageUrl = nextPageMatch.Groups["nextPageUrl"].Value;
+
+            await downloader.Delay();
 
             var nextPageResult = await LoadIdsPrivateAsync(nextPageUrl, description, page + 1);
 
