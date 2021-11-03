@@ -22,6 +22,7 @@ namespace UI
         private Director director;
         private Random rnd = new Random();
         private int queriesCount = 0;
+        private DateTime NextQuery;
 
         public Form1()
         {
@@ -134,6 +135,8 @@ namespace UI
         private void EnableTimer()
         {
             var interval = rnd.Next(appConfig.PoolingIntervalMin, appConfig.PoolingIntervalMax);
+            NextQuery = DateTime.Now.AddMilliseconds(interval);
+            nextQueryTimer.Enabled = true;
             poolingfTimer.Interval = interval;
             poolingfTimer.Enabled = true;
         }
@@ -141,6 +144,8 @@ namespace UI
         private void poolingfTimer_Tick(object sender, EventArgs e)
         {
             poolingfTimer.Enabled = false;
+            nextQueryTimer.Enabled = false;
+            nextQueryLabel.Text = "сейчас";
 
             try
             {
@@ -161,6 +166,23 @@ namespace UI
             }
 
             EnableTimer();
+        }
+
+        private void nextQueryTimer_Tick(object sender, EventArgs e)
+        {
+            var diff = NextQuery - DateTime.Now;
+            if (diff.TotalMilliseconds < 0)
+            {
+                nextQueryLabel.Text = "00:00";
+                nextQueryTimer.Enabled = false;
+                return;
+            }
+
+            var seconds = diff.Seconds > 10
+                ? diff.Seconds.ToString()
+                : "0" + diff.Seconds.ToString();
+
+            nextQueryLabel.Text = $"{diff.Minutes}:{seconds}";
         }
     }
 }

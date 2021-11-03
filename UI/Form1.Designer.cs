@@ -37,6 +37,10 @@ namespace UI
             this.StatusToolStripComboBox = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripButtonRefresh = new System.Windows.Forms.ToolStripButton();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.queriesCountLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.nextQueryLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.IdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.VermieterColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -45,8 +49,7 @@ namespace UI
             this.GesehenColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.LinkColumn = new System.Windows.Forms.DataGridViewLinkColumn();
             this.poolingfTimer = new System.Windows.Forms.Timer(this.components);
-            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.queriesCountLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.nextQueryTimer = new System.Windows.Forms.Timer(this.components);
             this.toolStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -100,12 +103,40 @@ namespace UI
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1,
-            this.queriesCountLabel});
+            this.queriesCountLabel,
+            this.toolStripStatusLabel2,
+            this.nextQueryLabel});
             this.statusStrip1.Location = new System.Drawing.Point(0, 428);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(800, 22);
             this.statusStrip1.TabIndex = 1;
             this.statusStrip1.Text = "statusStrip1";
+            // 
+            // toolStripStatusLabel1
+            // 
+            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(66, 17);
+            this.toolStripStatusLabel1.Text = "Запросов: ";
+            // 
+            // queriesCountLabel
+            // 
+            this.queriesCountLabel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.queriesCountLabel.Name = "queriesCountLabel";
+            this.queriesCountLabel.Size = new System.Drawing.Size(14, 17);
+            this.queriesCountLabel.Text = "0";
+            // 
+            // toolStripStatusLabel2
+            // 
+            this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
+            this.toolStripStatusLabel2.Size = new System.Drawing.Size(150, 17);
+            this.toolStripStatusLabel2.Text = "Следующий запрос через";
+            // 
+            // nextQueryLabel
+            // 
+            this.nextQueryLabel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.nextQueryLabel.Name = "nextQueryLabel";
+            this.nextQueryLabel.Size = new System.Drawing.Size(38, 17);
+            this.nextQueryLabel.Text = "00:00";
             // 
             // dataGridView1
             // 
@@ -171,18 +202,10 @@ namespace UI
             // 
             this.poolingfTimer.Tick += new System.EventHandler(this.poolingfTimer_Tick);
             // 
-            // toolStripStatusLabel1
+            // nextQueryTimer
             // 
-            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(66, 17);
-            this.toolStripStatusLabel1.Text = "Запросов: ";
-            // 
-            // queriesCountLabel
-            // 
-            this.queriesCountLabel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.queriesCountLabel.Name = "queriesCountLabel";
-            this.queriesCountLabel.Size = new System.Drawing.Size(14, 17);
-            this.queriesCountLabel.Text = "0";
+            this.nextQueryTimer.Interval = 1000;
+            this.nextQueryTimer.Tick += new System.EventHandler(this.nextQueryTimer_Tick);
             // 
             // Form1
             // 
@@ -195,6 +218,7 @@ namespace UI
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Квартиры";
+            this.WindowState = System.Windows.Forms.FormWindowState.Minimized;
             this.Load += new System.EventHandler(this.Form1_Load);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
@@ -224,6 +248,9 @@ namespace UI
         private System.Windows.Forms.Timer poolingfTimer;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.ToolStripStatusLabel queriesCountLabel;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
+        private System.Windows.Forms.ToolStripStatusLabel nextQueryLabel;
+        private System.Windows.Forms.Timer nextQueryTimer;
     }
 }
 
