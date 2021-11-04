@@ -50,10 +50,6 @@ namespace UI
             this.loadingTimerText = new System.Windows.Forms.ToolStripStatusLabel();
             this.loadingTimerValue = new System.Windows.Forms.ToolStripStatusLabel();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.poolingfTimer = new System.Windows.Forms.Timer(this.components);
-            this.nextQueryTimer = new System.Windows.Forms.Timer(this.components);
-            this.loadingTimer = new System.Windows.Forms.Timer(this.components);
-            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.IdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.WohnungColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.VermieterColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -68,6 +64,12 @@ namespace UI
             this.BalkonColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.GesehenColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.LinkColumn = new System.Windows.Forms.DataGridViewLinkColumn();
+            this.poolingfTimer = new System.Windows.Forms.Timer(this.components);
+            this.nextQueryTimer = new System.Windows.Forms.Timer(this.components);
+            this.loadingTimer = new System.Windows.Forms.Timer(this.components);
+            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.toolStripLabel4 = new System.Windows.Forms.ToolStripLabel();
+            this.roomsTextBox = new System.Windows.Forms.ToolStripTextBox();
             this.toolStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -83,6 +85,8 @@ namespace UI
             this.StatusToolStripComboBox,
             this.toolStripLabel3,
             this.wbsComboBox,
+            this.toolStripLabel4,
+            this.roomsTextBox,
             this.toolStripSeparator1,
             this.toolStripButtonRefresh,
             this.downloadNowButton,
@@ -260,26 +264,6 @@ namespace UI
             this.dataGridView1.TabIndex = 2;
             this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
             // 
-            // poolingfTimer
-            // 
-            this.poolingfTimer.Tick += new System.EventHandler(this.poolingfTimer_Tick);
-            // 
-            // nextQueryTimer
-            // 
-            this.nextQueryTimer.Interval = 1000;
-            this.nextQueryTimer.Tick += new System.EventHandler(this.nextQueryTimer_Tick);
-            // 
-            // loadingTimer
-            // 
-            this.loadingTimer.Interval = 1000;
-            this.loadingTimer.Tick += new System.EventHandler(this.loadingTimer_Tick);
-            // 
-            // backgroundWorker1
-            // 
-            this.backgroundWorker1.WorkerSupportsCancellation = true;
-            this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
-            this.backgroundWorker1.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker1_RunWorkerCompleted);
-            // 
             // IdColumn
             // 
             this.IdColumn.HeaderText = "Id";
@@ -394,6 +378,38 @@ namespace UI
             this.LinkColumn.ReadOnly = true;
             this.LinkColumn.Width = 80;
             // 
+            // poolingfTimer
+            // 
+            this.poolingfTimer.Tick += new System.EventHandler(this.poolingfTimer_Tick);
+            // 
+            // nextQueryTimer
+            // 
+            this.nextQueryTimer.Interval = 1000;
+            this.nextQueryTimer.Tick += new System.EventHandler(this.nextQueryTimer_Tick);
+            // 
+            // loadingTimer
+            // 
+            this.loadingTimer.Interval = 1000;
+            this.loadingTimer.Tick += new System.EventHandler(this.loadingTimer_Tick);
+            // 
+            // backgroundWorker1
+            // 
+            this.backgroundWorker1.WorkerSupportsCancellation = true;
+            this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
+            this.backgroundWorker1.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker1_RunWorkerCompleted);
+            // 
+            // toolStripLabel4
+            // 
+            this.toolStripLabel4.Name = "toolStripLabel4";
+            this.toolStripLabel4.Size = new System.Drawing.Size(85, 25);
+            this.toolStripLabel4.Text = "Комнат >=";
+            // 
+            // roomsTextBox
+            // 
+            this.roomsTextBox.Name = "roomsTextBox";
+            this.roomsTextBox.Size = new System.Drawing.Size(20, 28);
+            this.roomsTextBox.Text = "3";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 19F);
@@ -457,6 +473,8 @@ namespace UI
         private System.Windows.Forms.DataGridViewTextBoxColumn BalkonColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn GesehenColumn;
         private System.Windows.Forms.DataGridViewLinkColumn LinkColumn;
+        private System.Windows.Forms.ToolStripLabel toolStripLabel4;
+        private System.Windows.Forms.ToolStripTextBox roomsTextBox;
     }
 }
 

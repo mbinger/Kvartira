@@ -16,6 +16,7 @@ namespace Common
         public int? FilterVisitedInitialValue { get; set; }
         public int? FilterImportanceInitialValue { get; set; }
         public int? FilterWbsInitialValue { get; set; }
+        public int? FilterRoomsInitialValue { get; set; }
     }
 
     public class Search

@@ -83,7 +83,19 @@ namespace UI
 
         private void toolStripButtonRefresh_Click(object sender, EventArgs e)
         {
-            var importance = int.Parse(toolStripTextBoxRating.Text);
+            var importance = Scanner.ParseInt(toolStripTextBoxRating.Text) ?? 0;
+            toolStripTextBoxRating.Text = importance.ToString();
+
+            int? rooms = null;
+            if (!string.IsNullOrEmpty(roomsTextBox.Text))
+            {
+                rooms = Scanner.ParseInt(roomsTextBox.Text);
+                if (rooms == null)
+                {
+                    roomsTextBox.Text = "";
+                }
+            }
+
             dataGridView1.Rows.Clear();
 
             List<WohnungHeaderEntity> headers;
@@ -102,7 +114,12 @@ namespace UI
                     //без WBS
                     query = query.Where(p => !p.Details.Any(d => d.Wbs == true));
                 }
-                
+                if (rooms != null)
+                {
+                    //кол-во комнат
+                    query = query.Where(p => !p.Details.Any() || p.Details.Any(d => d.Zimmer == null || d.Zimmer >= rooms.Value));
+                }
+
                 headers = query.ToList();
                 var headerIds = headers.Select(p => p.Id).ToList();
                 details = db.WohnungDetails.Where(p => headerIds.Contains(p.WohnungHeaderId)).ToList();

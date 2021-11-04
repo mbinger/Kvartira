@@ -12,6 +12,7 @@
   "FilterVisitedInitialValue": 1,
   "FilterImportanceInitialValue": 0,
   "FilterWbsInitialValue": 1,
+  "FilterRoomsInitialValue": null,
   "SearchConfig": [
     {
       "ProviderName": "GEWOBAG",
