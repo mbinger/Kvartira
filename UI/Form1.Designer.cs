@@ -45,10 +45,6 @@ namespace UI
             this.loadingTimerText = new System.Windows.Forms.ToolStripStatusLabel();
             this.loadingTimerValue = new System.Windows.Forms.ToolStripStatusLabel();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.poolingfTimer = new System.Windows.Forms.Timer(this.components);
-            this.nextQueryTimer = new System.Windows.Forms.Timer(this.components);
-            this.loadingTimer = new System.Windows.Forms.Timer(this.components);
-            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.IdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.WohnungColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.VermieterColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -62,6 +58,10 @@ namespace UI
             this.ImportanceColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.GesehenColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.LinkColumn = new System.Windows.Forms.DataGridViewLinkColumn();
+            this.poolingfTimer = new System.Windows.Forms.Timer(this.components);
+            this.nextQueryTimer = new System.Windows.Forms.Timer(this.components);
+            this.loadingTimer = new System.Windows.Forms.Timer(this.components);
+            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.toolStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -212,26 +212,6 @@ namespace UI
             this.dataGridView1.TabIndex = 2;
             this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
             // 
-            // poolingfTimer
-            // 
-            this.poolingfTimer.Tick += new System.EventHandler(this.poolingfTimer_Tick);
-            // 
-            // nextQueryTimer
-            // 
-            this.nextQueryTimer.Interval = 1000;
-            this.nextQueryTimer.Tick += new System.EventHandler(this.nextQueryTimer_Tick);
-            // 
-            // loadingTimer
-            // 
-            this.loadingTimer.Interval = 1000;
-            this.loadingTimer.Tick += new System.EventHandler(this.loadingTimer_Tick);
-            // 
-            // backgroundWorker1
-            // 
-            this.backgroundWorker1.WorkerSupportsCancellation = true;
-            this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
-            this.backgroundWorker1.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker1_RunWorkerCompleted);
-            // 
             // IdColumn
             // 
             this.IdColumn.HeaderText = "Id";
@@ -296,6 +276,7 @@ namespace UI
             this.BezirkColumn.MinimumWidth = 6;
             this.BezirkColumn.Name = "BezirkColumn";
             this.BezirkColumn.ReadOnly = true;
+            this.BezirkColumn.Width = 120;
             // 
             // AddressColumn
             // 
@@ -337,6 +318,26 @@ namespace UI
             this.LinkColumn.ReadOnly = true;
             this.LinkColumn.Width = 80;
             // 
+            // poolingfTimer
+            // 
+            this.poolingfTimer.Tick += new System.EventHandler(this.poolingfTimer_Tick);
+            // 
+            // nextQueryTimer
+            // 
+            this.nextQueryTimer.Interval = 1000;
+            this.nextQueryTimer.Tick += new System.EventHandler(this.nextQueryTimer_Tick);
+            // 
+            // loadingTimer
+            // 
+            this.loadingTimer.Interval = 1000;
+            this.loadingTimer.Tick += new System.EventHandler(this.loadingTimer_Tick);
+            // 
+            // backgroundWorker1
+            // 
+            this.backgroundWorker1.WorkerSupportsCancellation = true;
+            this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
+            this.backgroundWorker1.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker1_RunWorkerCompleted);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 19F);
@@ -349,7 +350,6 @@ namespace UI
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Квартиры";
-            this.WindowState = System.Windows.Forms.FormWindowState.Minimized;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.toolStrip1.ResumeLayout(false);

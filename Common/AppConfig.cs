@@ -12,6 +12,7 @@ namespace Common
         public int PoolingIntervalMin { get; set; }
         public int PoolingIntervalMax { get; set; }
         public string ProxyUrl { get; set; }
+        public bool RunMinimized { get; set; }
     }
 
     public class Search

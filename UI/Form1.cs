@@ -32,7 +32,21 @@ namespace UI
         {
             StatusToolStripComboBox.SelectedIndex = 0;
 
-            appConfig = JsonConvert.DeserializeObject<AppConfig>(File.ReadAllText("Config.json"));
+            const string configFileName = "Config.json";
+            string configContent;
+            var path1 = Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "Config", configFileName);
+            var path2 = Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), configFileName);
+            if (File.Exists(path1))
+            {
+                configContent = File.ReadAllText(path1);
+            }
+            else if (File.Exists(path2))
+            {
+                configContent = File.ReadAllText(path2);
+            }
+            else throw new Exception($"Configuration file not found:\n{path1}\n{path2}");
+
+            appConfig = JsonConvert.DeserializeObject<AppConfig>(configContent);
             WohnungDb.AppConfig = appConfig;
 
             using (var context = new WohnungDb())
@@ -61,6 +75,15 @@ namespace UI
             toolStripButtonRefresh_Click(sender, e);
 
             EnableTimer();
+
+            if (appConfig.RunMinimized)
+            {
+                WindowState = FormWindowState.Minimized;
+            }
+            else
+            {
+                WindowState = FormWindowState.Maximized;
+            }
         }
 
         private void toolStripButtonRefresh_Click(object sender, EventArgs e)

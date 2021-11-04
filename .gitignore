@@ -261,3 +261,4 @@ Log/
 /Logs/log.txt
 /WohnungDb.sqlite-shm
 /WohnungDb.sqlite-wal
+/!token.txt

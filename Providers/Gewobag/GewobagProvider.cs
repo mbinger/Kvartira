@@ -43,6 +43,14 @@ namespace Providers.Gewobag
                     };
                 }
 
+                if (content.Content.Contains("Es konnten keine passenden Angebote gefunden werden"))
+                {
+                    return new LoadIdsResult
+                    {
+                        PagesCount = 0
+                    };
+                }
+
                 //get IDS
                 //<a href="https://www.gewobag.de/fuer-mieter-und-mietinteressenten/mietangebote/0100-01711-0204-0119/" class="read-more-link">Mietangebot ansehen</ a >
                 var getIdsRegex = new Regex("https://www.gewobag.de/fuer-mieter-und-mietinteressenten/mietangebote/(?<id>[0-9a-zA-Z\\-]+)/");
