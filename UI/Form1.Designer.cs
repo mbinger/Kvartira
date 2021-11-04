@@ -35,6 +35,8 @@ namespace UI
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.toolStripTextBoxRating = new System.Windows.Forms.ToolStripTextBox();
             this.StatusToolStripComboBox = new System.Windows.Forms.ToolStripComboBox();
+            this.wbsComboBox = new System.Windows.Forms.ToolStripComboBox();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButtonRefresh = new System.Windows.Forms.ToolStripButton();
             this.downloadNowButton = new System.Windows.Forms.ToolStripButton();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
@@ -62,6 +64,7 @@ namespace UI
             this.nextQueryTimer = new System.Windows.Forms.Timer(this.components);
             this.loadingTimer = new System.Windows.Forms.Timer(this.components);
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.buttonMarkAllAsRead = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -74,8 +77,11 @@ namespace UI
             this.toolStripLabel1,
             this.toolStripTextBoxRating,
             this.StatusToolStripComboBox,
+            this.wbsComboBox,
+            this.toolStripSeparator1,
             this.toolStripButtonRefresh,
-            this.downloadNowButton});
+            this.downloadNowButton,
+            this.buttonMarkAllAsRead});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(1127, 28);
@@ -98,10 +104,23 @@ namespace UI
             // 
             this.StatusToolStripComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.StatusToolStripComboBox.Items.AddRange(new object[] {
-            "только новые",
+            "непросмотренные",
             "все"});
             this.StatusToolStripComboBox.Name = "StatusToolStripComboBox";
             this.StatusToolStripComboBox.Size = new System.Drawing.Size(194, 28);
+            // 
+            // wbsComboBox
+            // 
+            this.wbsComboBox.Items.AddRange(new object[] {
+            "без WBS",
+            "с и без WBS"});
+            this.wbsComboBox.Name = "wbsComboBox";
+            this.wbsComboBox.Size = new System.Drawing.Size(121, 28);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 28);
             // 
             // toolStripButtonRefresh
             // 
@@ -338,6 +357,16 @@ namespace UI
             this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
             this.backgroundWorker1.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker1_RunWorkerCompleted);
             // 
+            // buttonMarkAllAsRead
+            // 
+            this.buttonMarkAllAsRead.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.buttonMarkAllAsRead.Image = ((System.Drawing.Image)(resources.GetObject("buttonMarkAllAsRead.Image")));
+            this.buttonMarkAllAsRead.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.buttonMarkAllAsRead.Name = "buttonMarkAllAsRead";
+            this.buttonMarkAllAsRead.Size = new System.Drawing.Size(252, 25);
+            this.buttonMarkAllAsRead.Text = "Пометить все как просмотренные";
+            this.buttonMarkAllAsRead.Click += new System.EventHandler(this.buttonMarkAllAsRead_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 19F);
@@ -395,6 +424,9 @@ namespace UI
         private System.Windows.Forms.DataGridViewTextBoxColumn ImportanceColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn GesehenColumn;
         private System.Windows.Forms.DataGridViewLinkColumn LinkColumn;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripComboBox wbsComboBox;
+        private System.Windows.Forms.ToolStripButton buttonMarkAllAsRead;
     }
 }
 

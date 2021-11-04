@@ -31,6 +31,7 @@ namespace UI
         private void Form1_Load(object sender, EventArgs e)
         {
             StatusToolStripComboBox.SelectedIndex = 0;
+            wbsComboBox.SelectedIndex = 0;
 
             const string configFileName = "Config.json";
             string configContent;
@@ -101,6 +102,11 @@ namespace UI
                 {
                     //только новые
                     query = query.Where(p => p.Gesehen == null);
+                }
+                if (wbsComboBox.SelectedIndex == 0)
+                {
+                    //без WBS
+                    query = query.Where(p => !p.Details.Any(d => d.Wbs == true));
                 }
                 
                 headers = query.ToList();
@@ -297,6 +303,26 @@ namespace UI
                 return;
             }
             loadingTimerValue.Text = diff;
+        }
+
+        private void buttonMarkAllAsRead_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("Пометить все как просмотренные?", "Вопрос", MessageBoxButtons.YesNo) != DialogResult.Yes)
+            {
+                return;
+            }
+
+            var ids = dataGridView1.Rows.Cast<DataGridViewRow>().Select(p => int.Parse((string)p.Cells[IdColumn.Index].Value)).ToList();
+
+            using (var db = new WohnungDb())
+            {
+                var items = db.WohnungHeaders.Where(p => ids.Contains(p.Id) && p.Gesehen == null).ToList();
+                foreach (var item in items)
+                {
+                    item.Gesehen = DateTime.Today;
+                }
+                db.SaveChanges();
+            }
         }
     }
 }
