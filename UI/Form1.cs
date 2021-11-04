@@ -30,9 +30,6 @@ namespace UI
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            StatusToolStripComboBox.SelectedIndex = 0;
-            wbsComboBox.SelectedIndex = 0;
-
             const string configFileName = "Config.json";
             string configContent;
             var path1 = Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "Config", configFileName);
@@ -55,16 +52,13 @@ namespace UI
                 context.Database.EnsureCreatedAsync().GetAwaiter().GetResult();
             }
 
+            StatusToolStripComboBox.SelectedIndex = appConfig.FilterVisitedInitialValue ?? 0;
+            wbsComboBox.SelectedIndex = appConfig.FilterWbsInitialValue ?? 0;
+            toolStripTextBoxRating.Text = (appConfig.FilterImportanceInitialValue ?? 1).ToString();
+
             log = new Log(appConfig);
 
             var downloader = new HttpDownloader(log, appConfig);
-            /*
-            downloader = new DumpDownloader(appConfig, new[]
-            {
-                "2021_11_03_12_38_58_GEWOBAG_Test Gewobag load all page 1.htm",
-                "2021_11_03_12_39_04_GEWOBAG_Test Gewobag load all page 2.htm"
-            });
-            */
             providers = new IProvider[]
             {
                 new GewobagProvider(downloader, log)
@@ -140,6 +134,7 @@ namespace UI
                     detail?.Anschrift,
                     detail?.Ueberschrift,
                     header.Wichtigkeit, 
+                    formatBool(detail?.Balkon),
                     header.Gesehen?.ToString("dd.MM.yyyy"), 
                     "открыть");
             }
@@ -263,11 +258,7 @@ namespace UI
             //start download
             try
             {
-                var count = director.LoadAsync().GetAwaiter().GetResult();
-                if (count > 0)
-                {
-                    WinApi.Flash(this);
-                }
+                director.LoadAsync().GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
@@ -280,8 +271,19 @@ namespace UI
         {
             //download ends
             queriesCount++;
-            toolStripButtonRefresh_Click(sender, e);
             queriesCountLabel.Text = queriesCount.ToString();
+
+            var oldIds = GetIdsFromCurrentView();
+
+            //refresh view
+            toolStripButtonRefresh_Click(sender, e);
+
+            var newIds = GetIdsFromCurrentView();
+
+            //loaded something new
+            if (newIds.Any(p => !oldIds.Contains(p)))
+            {
+                WinApi.Flash(this);            }
 
             EnableTimer();
         }
@@ -305,6 +307,12 @@ namespace UI
             loadingTimerValue.Text = diff;
         }
 
+        private List<int> GetIdsFromCurrentView()
+        {
+            var ids = dataGridView1.Rows.Cast<DataGridViewRow>().Select(p => int.Parse((string)p.Cells[IdColumn.Index].Value)).ToList();
+            return ids;
+        }
+
         private void buttonMarkAllAsRead_Click(object sender, EventArgs e)
         {
             if (MessageBox.Show("Пометить все как просмотренные?", "Вопрос", MessageBoxButtons.YesNo) != DialogResult.Yes)
@@ -312,7 +320,7 @@ namespace UI
                 return;
             }
 
-            var ids = dataGridView1.Rows.Cast<DataGridViewRow>().Select(p => int.Parse((string)p.Cells[IdColumn.Index].Value)).ToList();
+            var ids = GetIdsFromCurrentView();
 
             using (var db = new WohnungDb())
             {

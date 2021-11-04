@@ -4,11 +4,14 @@
   "DumpFolder": "c:\\Projects\\Kvartira\\Download",
   "PoolingIntervalMin": 900000,
   "PoolingIntervalMax": 1200000,
-  "RunMinimized": false,
   "ProxyUrl": "http://webproxy-se.corp.vattenfall.com:8080",
   "UserAgents": [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36"
   ],
+  "RunMinimized": false,
+  "FilterVisitedInitialValue": 1,
+  "FilterImportanceInitialValue": 0,
+  "FilterWbsInitialValue": 1,
   "SearchConfig": [
     {
       "ProviderName": "GEWOBAG",

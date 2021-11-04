@@ -13,6 +13,9 @@ namespace Common
         public int PoolingIntervalMax { get; set; }
         public string ProxyUrl { get; set; }
         public bool RunMinimized { get; set; }
+        public int? FilterVisitedInitialValue { get; set; }
+        public int? FilterImportanceInitialValue { get; set; }
+        public int? FilterWbsInitialValue { get; set; }
     }
 
     public class Search
