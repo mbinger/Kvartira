@@ -15,6 +15,9 @@ namespace Data
         public virtual WohnungHeaderEntity WohnungHeader { get; set; }
 
         [StringLength(256)]
+        public string Ueberschrift { get; set; }
+
+        [StringLength(256)]
         public string Bezirk { get; set; }
 
         [StringLength(512)]

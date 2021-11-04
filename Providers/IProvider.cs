@@ -7,6 +7,8 @@ namespace Providers
 {
     public class WohnungCard
     {
+        public string Header { get; set; }
+
         public string Bezirk { get; set; }
 
         public string Anschrift { get; set; }
@@ -14,6 +16,8 @@ namespace Providers
         public decimal? MieteKalt { get; set; }
 
         public decimal? MieteWarm { get; set; }
+
+        public decimal? Kaution { get; set; }
 
         public int? Etage { get; set; }
 
@@ -43,7 +47,7 @@ namespace Providers
     public interface IProvider
     {
         public string Name { get; }
-        public Task<LoadIdsResult> LoadIdsAsync(Search config);
+        public Task<LoadIdsResult> LoadIndexAsync(Search config);
         public Task<WohnungCard> LoadDetailsAsync(string wohnungId);
         public string GetOpenDetailsUrl(string wohnungId);
     }

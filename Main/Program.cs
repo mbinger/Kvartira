@@ -11,11 +11,11 @@ namespace Main
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             var program = new Program();
 
-            Task.Run(async () => await program.Work()).GetAwaiter().GetResult();
+            await program.Work();
 
             Console.WriteLine("Done. Press enter to exit.");
             Console.ReadLine();
@@ -37,20 +37,32 @@ namespace Main
             
             var downloader = new DumpDownloader(appConfig, new[]
             {
-                "2021_11_03_12_38_58_GEWOBAG_Test Gewobag load all page 1.htm",
-                "2021_11_03_12_39_04_GEWOBAG_Test Gewobag load all page 2.htm"
+                "2021_11_04_11_19_30_GEWOBAG_details_0100-02571-0103-0124.htm",
             });
-            
+
+            var gewobag = new GewobagProvider(downloader, log);
             var providers = new IProvider[]
             {
-                new GewobagProvider(downloader, log)
+                gewobag
             };
 
-            var director = new Director(appConfig, providers, log);
+            //var director = new Director(appConfig, providers, log);
 
-            var count = await director.LoadAsync();
+            //var count = await director.LoadAsync();
 
-            Console.WriteLine($"{count} entries loaded");
+            //Console.WriteLine($"{count} entries loaded");
+
+            /*
+            var index = await gewobag.LoadIndexAsync(new Search
+            {
+                DescriptionLong = "",
+                DescriptionShort = "",
+                Importance = 0,
+                ProviderName = "GEWOBAG",
+                SearchUrl = "",
+                Active = true
+            });*/
+            var details = await gewobag.LoadDetailsAsync("0100-02571-0103-0124");
         }
     }
 }

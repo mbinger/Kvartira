@@ -24,7 +24,7 @@ namespace Common
             return Task.CompletedTask;
         }
 
-        public async Task<Response> GetAsync(string url, string description)
+        public async Task<Response> GetAsync(string url, string description, bool deflate)
         {
             if (index >= dumpFiles.Length)
             {
@@ -37,6 +37,8 @@ namespace Common
             var regexTrimStart = new Regex("^<!--");
             var regexTrimEnd = new Regex("-->$");
 
+            Response result;
+
             using (var textReader = new StreamReader(path))
             {
                 var urlText = await textReader.ReadLineAsync();
@@ -44,19 +46,45 @@ namespace Common
                 var exceptionText = await textReader.ReadLineAsync();
                 var content = await textReader.ReadToEndAsync();
 
-                urlText = regexTrimEnd.Replace(regexTrimStart.Replace(urlText, ""), "");
-                httpStatusCodeText = regexTrimEnd.Replace(regexTrimStart.Replace(httpStatusCodeText, ""), "");
-                exceptionText = regexTrimEnd.Replace(regexTrimStart.Replace(exceptionText, ""), "");
+                if (regexTrimStart.IsMatch(urlText) && regexTrimEnd.IsMatch(urlText) &&
+                    regexTrimStart.IsMatch(httpStatusCodeText) && regexTrimEnd.IsMatch(httpStatusCodeText) &&
+                    regexTrimStart.IsMatch(exceptionText) && regexTrimEnd.IsMatch(exceptionText))
+                {
+                    urlText = regexTrimEnd.Replace(regexTrimStart.Replace(urlText, ""), "");
+                    httpStatusCodeText = regexTrimEnd.Replace(regexTrimStart.Replace(httpStatusCodeText, ""), "");
+                    exceptionText = regexTrimEnd.Replace(regexTrimStart.Replace(exceptionText, ""), "");
+
+                    result = new Response
+                    {
+                        Url = urlText,
+                        HttpStatusCode = int.Parse(httpStatusCodeText),
+                        Exception = string.IsNullOrEmpty(exceptionText) ? null : exceptionText,
+                        Content = content
+                    };
+                }
+                else
+                {
+                    var sb = new StringBuilder();
+                    sb.AppendLine(urlText);
+                    sb.AppendLine(httpStatusCodeText);
+                    sb.AppendLine(exceptionText);
+                    sb.AppendLine(content);
+
+                    result = new Response
+                    {
+                        Url = url,
+                        HttpStatusCode = 0,
+                        Exception = null,
+                        Content = sb.ToString()
+                    };
+                }
 
                 index++;
 
-                var result = new Response
+                if (deflate)
                 {
-                    Url = urlText,
-                    HttpStatusCode = int.Parse(httpStatusCodeText),
-                    Exception = string.IsNullOrEmpty(exceptionText) ? null : exceptionText,
-                    Content = content
-                };
+                    result.Content = Scanner.DeflateHtml(result.Content);
+                }
 
                 return result;
             }

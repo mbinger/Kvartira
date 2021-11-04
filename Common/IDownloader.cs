@@ -4,7 +4,7 @@ namespace Common
 {
     public interface IDownloader
     {
-        public Task<Response> GetAsync(string url, string description);
+        public Task<Response> GetAsync(string url, string description, bool deflate);
         public Task Delay();
     }
 

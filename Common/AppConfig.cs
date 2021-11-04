@@ -11,6 +11,7 @@ namespace Common
         public List<Search> SearchConfig { get; set; }
         public int PoolingIntervalMin { get; set; }
         public int PoolingIntervalMax { get; set; }
+        public string ProxyUrl { get; set; }
     }
 
     public class Search

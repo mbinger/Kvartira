@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Common
@@ -44,7 +45,7 @@ namespace Common
             return Task.Delay(delay);
         }
 
-        public async Task<Response> GetAsync(string url, string description)
+        public async Task<Response> GetAsync(string url, string description, bool deflate)
         {
             var result = new Response
             {
@@ -60,6 +61,17 @@ namespace Common
                 request.Method = "GET";
                 request.UserAgent = userAgent;
                 request.ContentType = "text/plain;charset=UTF-8";
+
+                if (!string.IsNullOrEmpty(appConfig.ProxyUrl))
+                {
+                    var proxy = new WebProxy
+                    {
+                        Address = new Uri(appConfig.ProxyUrl),
+                        BypassProxyOnLocal = false,
+                        UseDefaultCredentials = true
+                    };
+                    request.Proxy = proxy;
+                }
 
                 var response = (HttpWebResponse)await request.GetResponseAsync();
 
@@ -79,6 +91,12 @@ namespace Common
             }
 
             await DumpDownloader.WriteDumpAsync(appConfig, log, result, description);
+
+            if (deflate && !string.IsNullOrEmpty(result.Content))
+            {
+                result.Content = Scanner.DeflateHtml(result.Content);
+                await DumpDownloader.WriteDumpAsync(appConfig, log, result, description + "_deflated");
+            }
 
             return result;
         }

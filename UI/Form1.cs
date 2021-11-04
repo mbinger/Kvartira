@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Windows.Forms;
 
 namespace UI
@@ -17,12 +16,12 @@ namespace UI
     {
         private AppConfig appConfig;
         private Log log;
-        private IDownloader downloader;
         private IProvider[] providers;
         private Director director;
         private Random rnd = new Random();
         private int queriesCount = 0;
         private DateTime NextQuery;
+        private DateTime StartLoading;
 
         public Form1()
         {
@@ -43,14 +42,14 @@ namespace UI
 
             log = new Log(appConfig);
 
-            //var downloader = new HttpDownloader(log, appConfig);
-
+            var downloader = new HttpDownloader(log, appConfig);
+            /*
             downloader = new DumpDownloader(appConfig, new[]
             {
                 "2021_11_03_12_38_58_GEWOBAG_Test Gewobag load all page 1.htm",
                 "2021_11_03_12_39_04_GEWOBAG_Test Gewobag load all page 2.htm"
             });
-
+            */
             providers = new IProvider[]
             {
                 new GewobagProvider(downloader, log)
@@ -68,7 +67,10 @@ namespace UI
         {
             var importance = int.Parse(toolStripTextBoxRating.Text);
             dataGridView1.Rows.Clear();
+
             List<WohnungHeaderEntity> headers;
+            List<WohnungDetailsEntity> details;
+
             using (var db = new WohnungDb())
             {
                 var query = db.WohnungHeaders.Where(p => p.Wichtigkeit >= importance);
@@ -77,13 +79,40 @@ namespace UI
                     //только новые
                     query = query.Where(p => p.Gesehen == null);
                 }
+                
                 headers = query.ToList();
+                var headerIds = headers.Select(p => p.Id).ToList();
+                details = db.WohnungDetails.Where(p => headerIds.Contains(p.WohnungHeaderId)).ToList();
             }
 
             var rows = new List<DataGridViewRow>();
+
+            string formatBool(bool? val)
+            {
+                if (val == null)
+                {
+                    return "?";
+                };
+                return val.Value ? "Да" : "";
+            }
+
+
             foreach (var header in headers)
             {
-                dataGridView1.Rows.Add(header.Id, header.Provider, header.WohnungId, header.Wichtigkeit, header.Gesehen?.ToString("dd.MM.yyyy"), "открыть");
+                var detail = details.FirstOrDefault(p => p.WohnungHeaderId == header.Id);
+                dataGridView1.Rows.Add(header.Id,
+                    header.WohnungId,
+                    header.Provider,
+                    detail?.Zimmer?.ToString() ?? "",
+                    detail?.Flaeche?.ToString() ?? "",
+                    detail?.MieteWarm?.ToString() ?? "",
+                    formatBool(detail?.Wbs),
+                    detail?.Bezirk,
+                    detail?.Anschrift,
+                    detail?.Ueberschrift,
+                    header.Wichtigkeit, 
+                    header.Gesehen?.ToString("dd.MM.yyyy"), 
+                    "открыть");
             }
 
             dataGridView1.Refresh();
@@ -139,50 +168,112 @@ namespace UI
             nextQueryTimer.Enabled = true;
             poolingfTimer.Interval = interval;
             poolingfTimer.Enabled = true;
+            downloadNowButton.Enabled = true;
+            loadingTimer.Enabled = false;
+            loadingTimerValue.Visible = false;
+            loadingTimerText.Visible = false;
+            nextQueryText.Visible = true;
+            nextQueryValue.Visible = true;
         }
 
         private void poolingfTimer_Tick(object sender, EventArgs e)
         {
+            if (backgroundWorker1.IsBusy)
+            {
+                return;
+            }
+
             poolingfTimer.Enabled = false;
             nextQueryTimer.Enabled = false;
-            nextQueryLabel.Text = "сейчас";
+            nextQueryValue.Text = "сейчас";
+            downloadNowButton.Enabled = false;
+            StartLoading = DateTime.Now;
+            loadingTimer.Enabled = true;
+            nextQueryText.Visible = nextQueryValue.Visible = false;
+            loadingTimerText.Visible = loadingTimerValue.Visible = true;
 
-            try
-            {
-                var count = director.LoadAsync().GetAwaiter().GetResult();
-                queriesCount++;
-                if (count > 0)
-                {
-                    WinApi.Flash(this);
-
-                    //refresh
-                    toolStripButtonRefresh_Click(sender, e);
-                }
-                queriesCountLabel.Text = queriesCount.ToString();
-            }
-            catch (Exception ex)
-            {
-                log.LogAsync("ERROR pooling:\n" + ex.ToString()).GetAwaiter().GetResult();
-            }
-
-            EnableTimer();
+            backgroundWorker1.RunWorkerAsync();
         }
 
-        private void nextQueryTimer_Tick(object sender, EventArgs e)
+        private string FormatTimeSpan(TimeSpan diff)
         {
-            var diff = NextQuery - DateTime.Now;
             if (diff.TotalMilliseconds < 0)
             {
-                nextQueryLabel.Text = "00:00";
+                nextQueryValue.Text = "00:00";
                 nextQueryTimer.Enabled = false;
-                return;
+                return null;
             }
 
             var seconds = diff.Seconds > 10
                 ? diff.Seconds.ToString()
                 : "0" + diff.Seconds.ToString();
 
-            nextQueryLabel.Text = $"{diff.Minutes}:{seconds}";
+            return $"{diff.Minutes}:{seconds}";
+        }
+
+        private void nextQueryTimer_Tick(object sender, EventArgs e)
+        {
+            var text = FormatTimeSpan(NextQuery - DateTime.Now);
+            if (text == null)
+            {
+                nextQueryValue.Text = "00:00";
+                nextQueryTimer.Enabled = false;
+                return;
+            }
+
+            nextQueryValue.Text = text;
+        }
+
+        private void downloadNowButton_Click(object sender, EventArgs e)
+        {
+            poolingfTimer_Tick(sender, e);
+        }
+
+        private void backgroundWorker1_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        {
+            //start download
+            try
+            {
+                var count = director.LoadAsync().GetAwaiter().GetResult();
+                if (count > 0)
+                {
+                    WinApi.Flash(this);
+                }
+            }
+            catch (Exception ex)
+            {
+                log.LogAsync("ERROR pooling:\n" + ex.ToString()).GetAwaiter().GetResult();
+            }
+
+        }
+
+        private void backgroundWorker1_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
+        {
+            //download ends
+            queriesCount++;
+            toolStripButtonRefresh_Click(sender, e);
+            queriesCountLabel.Text = queriesCount.ToString();
+
+            EnableTimer();
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (backgroundWorker1.IsBusy)
+            {
+                backgroundWorker1.CancelAsync();
+            }
+        }
+
+        private void loadingTimer_Tick(object sender, EventArgs e)
+        {
+            var diff = FormatTimeSpan(DateTime.Now - StartLoading);
+            if (diff == null)
+            {
+                loadingTimerValue.Text = "?";
+                return;
+            }
+            loadingTimerValue.Text = diff;
         }
     }
 }

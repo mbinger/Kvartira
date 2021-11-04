@@ -32,6 +32,8 @@ namespace Data
 
         public DateTime? Gemeldet { get; set; }
 
+        public int LoadDetailsTries { get; set; }
+
         public virtual ICollection<WohnungDetailsEntity> Details { get; set; } = new Collection<WohnungDetailsEntity>();
     }
 }
