@@ -9,6 +9,7 @@ namespace Data
 
         public virtual DbSet<WohnungHeaderEntity> WohnungHeaders { get; set; }
         public virtual DbSet<WohnungDetailsEntity> WohnungDetails { get; set; }
+        public virtual DbSet<ProviderHealthEntity> ProviderHealthLogs { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

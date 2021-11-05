@@ -36,6 +36,11 @@ namespace Providers
         public bool? Balkon { get; set; }
 
         public bool? Keller { get; set; }
+
+        /// <summary>
+        /// WohnungCard complete
+        /// </summary>
+        public bool Complete { get; set; }
     }
 
     public class LoadIdsResult

@@ -6,6 +6,7 @@ using Providers.Gewobag;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -70,6 +71,8 @@ namespace UI
             toolStripButtonRefresh_Click(sender, e);
 
             EnableTimer();
+
+            ShowProvidersRating();
 
             if (appConfig.RunMinimized)
             {
@@ -300,9 +303,12 @@ namespace UI
             //loaded something new
             if (newIds.Any(p => !oldIds.Contains(p)))
             {
-                WinApi.Flash(this);            }
+                WinApi.Flash(this);            
+            }
 
             EnableTimer();
+
+            ShowProvidersRating();
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -348,6 +354,35 @@ namespace UI
                 }
                 db.SaveChanges();
             }
+        }
+
+        private void ShowProvidersRating()
+        {
+            var rating = director.GetRatingAll();
+            switch (rating.Color)
+            {
+                case ProviderHealthColor.Red:
+                    if (providerHealthButton.BackColor != Color.Red) providerHealthButton.BackColor = Color.Red;
+                    break;
+
+                case ProviderHealthColor.Yellow:
+                    if (providerHealthButton.BackColor != Color.Yellow) providerHealthButton.BackColor = Color.Yellow;
+                    break;
+
+                case ProviderHealthColor.Gray:
+                    if (providerHealthButton.BackColor != SystemColors.Control) providerHealthButton.BackColor = SystemColors.Control;
+                    break;
+
+                case ProviderHealthColor.Green:
+                    if (providerHealthButton.BackColor != Color.DarkGreen) providerHealthButton.BackColor = Color.DarkGreen;
+                    break;
+            }
+        }
+
+        private void providerHealthButton_Click(object sender, EventArgs e)
+        {
+            var form = new ProvidersHealthForm(director);
+            form.ShowDialog(this);
         }
     }
 }

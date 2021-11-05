@@ -38,6 +38,8 @@ namespace UI
             this.StatusToolStripComboBox = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripLabel3 = new System.Windows.Forms.ToolStripLabel();
             this.wbsComboBox = new System.Windows.Forms.ToolStripComboBox();
+            this.toolStripLabel4 = new System.Windows.Forms.ToolStripLabel();
+            this.roomsTextBox = new System.Windows.Forms.ToolStripTextBox();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButtonRefresh = new System.Windows.Forms.ToolStripButton();
             this.downloadNowButton = new System.Windows.Forms.ToolStripButton();
@@ -68,8 +70,7 @@ namespace UI
             this.nextQueryTimer = new System.Windows.Forms.Timer(this.components);
             this.loadingTimer = new System.Windows.Forms.Timer(this.components);
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-            this.toolStripLabel4 = new System.Windows.Forms.ToolStripLabel();
-            this.roomsTextBox = new System.Windows.Forms.ToolStripTextBox();
+            this.providerHealthButton = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -90,7 +91,8 @@ namespace UI
             this.toolStripSeparator1,
             this.toolStripButtonRefresh,
             this.downloadNowButton,
-            this.buttonMarkAllAsRead});
+            this.buttonMarkAllAsRead,
+            this.providerHealthButton});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(1170, 28);
@@ -138,6 +140,18 @@ namespace UI
             "все"});
             this.wbsComboBox.Name = "wbsComboBox";
             this.wbsComboBox.Size = new System.Drawing.Size(100, 28);
+            // 
+            // toolStripLabel4
+            // 
+            this.toolStripLabel4.Name = "toolStripLabel4";
+            this.toolStripLabel4.Size = new System.Drawing.Size(85, 25);
+            this.toolStripLabel4.Text = "Комнат >=";
+            // 
+            // roomsTextBox
+            // 
+            this.roomsTextBox.Name = "roomsTextBox";
+            this.roomsTextBox.Size = new System.Drawing.Size(20, 28);
+            this.roomsTextBox.Text = "3";
             // 
             // toolStripSeparator1
             // 
@@ -398,17 +412,16 @@ namespace UI
             this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
             this.backgroundWorker1.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker1_RunWorkerCompleted);
             // 
-            // toolStripLabel4
+            // providerHealthButton
             // 
-            this.toolStripLabel4.Name = "toolStripLabel4";
-            this.toolStripLabel4.Size = new System.Drawing.Size(85, 25);
-            this.toolStripLabel4.Text = "Комнат >=";
-            // 
-            // roomsTextBox
-            // 
-            this.roomsTextBox.Name = "roomsTextBox";
-            this.roomsTextBox.Size = new System.Drawing.Size(20, 28);
-            this.roomsTextBox.Text = "3";
+            this.providerHealthButton.BackColor = System.Drawing.SystemColors.Control;
+            this.providerHealthButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.providerHealthButton.Image = ((System.Drawing.Image)(resources.GetObject("providerHealthButton.Image")));
+            this.providerHealthButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.providerHealthButton.Name = "providerHealthButton";
+            this.providerHealthButton.Size = new System.Drawing.Size(103, 25);
+            this.providerHealthButton.Text = "Провайдеры";
+            this.providerHealthButton.Click += new System.EventHandler(this.providerHealthButton_Click);
             // 
             // Form1
             // 
@@ -475,6 +488,7 @@ namespace UI
         private System.Windows.Forms.DataGridViewLinkColumn LinkColumn;
         private System.Windows.Forms.ToolStripLabel toolStripLabel4;
         private System.Windows.Forms.ToolStripTextBox roomsTextBox;
+        private System.Windows.Forms.ToolStripButton providerHealthButton;
     }
 }
 

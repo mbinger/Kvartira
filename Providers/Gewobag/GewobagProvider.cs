@@ -133,6 +133,7 @@ namespace Providers.Gewobag
                     Beschreibung = await Scanner.ParseSafeAsync(beschreibungRegex, "beschreibung", response.Content, description, log),
                     Bezirk = await Scanner.ParseSafeAsync(bezirkRegex, "bezirk", response.Content, description, log),
                     Etage = await Scanner.ParseSafeIntAsync(etageregex, "bezirk", response.Content, description, log),
+                    Etagen = null,
                     Flaeche = await Scanner.ParseSafeDecimalAsync(flaecheRegex, "flaeche", response.Content, description, log),
                     FreiAb = await Scanner.ParseSafeDateAsync(freiAbRegex, "freiab", response.Content, description, log),
                     Wbs = header.Contains("WBS", StringComparison.InvariantCultureIgnoreCase),
@@ -142,6 +143,22 @@ namespace Providers.Gewobag
                     MieteWarm = await Scanner.ParseSafeDecimalAsync(gesamtMieteRegex, "mieteWarm", response.Content, description, log),
                     Kaution = await Scanner.ParseSafeDecimalAsync(kautionRegex, "kaution", response.Content, description, log)
                 };
+
+                card.Complete = !string.IsNullOrEmpty(card.Header) &&
+                    !string.IsNullOrEmpty(card.Anschrift) &&
+                    card.Balkon != null &&
+                    !string.IsNullOrEmpty(card.Beschreibung) &&
+                    !string.IsNullOrEmpty(card.Bezirk) &&
+                    card.Etage != null &&
+                    //Etagen gibt es nicht
+                    card.Flaeche != null &&
+                    card.FreiAb != null &&
+                    card.Wbs != null &&
+                    card.Keller != null &&
+                    card.Zimmer != null &&
+                    card.MieteKalt != null &&
+                    card.MieteWarm != null &&
+                    card.Kaution != null;
 
                 return card;
             }

@@ -85,6 +85,27 @@ namespace Providers
                             db.WohnungHeaders.Add(header);
                         }
 
+                        var providerHealthEntry = db.ProviderHealthLogs.FirstOrDefault(p => p.ProviderName == provider.Name);
+                        if (providerHealthEntry == null)
+                        {
+                            providerHealthEntry = new ProviderHealthEntity
+                            {
+                                ProviderName = provider.Name
+                            };
+                            db.ProviderHealthLogs.Add(providerHealthEntry);
+                        }
+
+                        providerHealthEntry.LastUpdate = now;
+
+                        if (headers.WohnungIds.Any())
+                        {
+                            providerHealthEntry.IdsLoaded = now;
+                        }
+                        if (newIds.Any())
+                        {
+                            providerHealthEntry.NewIdsLoaded = now;
+                        }
+
                         await db.SaveChangesAsync();
                     }
 
@@ -133,6 +154,9 @@ namespace Providers
                 }
 
                 var card = await provider.LoadDetailsAsync(id.WohnungId);
+
+                var now = DateTime.Now;
+
                 using (var db = new WohnungDb())
                 {
                     if (card != null)
@@ -156,6 +180,25 @@ namespace Providers
                             Zimmer = card.Zimmer
                         };
                         db.WohnungDetails.Add(detailsEntity);
+
+                        await db.SaveChangesAsync();
+
+                        var providerHealthEntry = db.ProviderHealthLogs.FirstOrDefault(p => p.ProviderName == provider.Name);
+                        if (providerHealthEntry == null)
+                        {
+                            providerHealthEntry = new ProviderHealthEntity
+                            {
+                                ProviderName = provider.Name
+                            };
+                            db.ProviderHealthLogs.Add(providerHealthEntry);
+                        }
+
+                        providerHealthEntry.DetailsLoaded = now;
+                        if (card.Complete)
+                        {
+                            providerHealthEntry.AllDetailsComlete = now;
+                        }
+
                         await db.SaveChangesAsync();
                     }
                     else
@@ -179,6 +222,141 @@ namespace Providers
             }
 
             return null;
+        }
+
+        public class ProviderHealthRating
+        {
+            public ProviderHealthEntity Entry { get; set; }
+            public string Reason { get; set; }
+            public ProviderHealthColor Color { get; set; }
+        }
+
+        private ProviderHealthRating GetRatingForEntry(ProviderHealthEntity entry)
+        {
+            var result = new ProviderHealthRating
+            {
+                Entry = entry,
+                Color = ProviderHealthColor.Green,
+                Reason = "OK"
+             };
+
+            var dateTimePattern = "dd.MM.yyyy HH:mm";
+
+            //not called yet
+            if (entry?.LastUpdate == null)
+            {
+                result.Reason = "Еще не загружался";
+                result.Color = ProviderHealthColor.Gray;
+                return result;
+            }
+
+            if (entry.IdsLoaded == null)
+            {
+                result.Reason = "Индекс никогда не загружался";
+                result.Color = ProviderHealthColor.Red;
+                return result;
+            }
+
+            if (entry.NewIdsLoaded == null)
+            {
+                result.Reason = "Новые квартиры никогда не были найдены";
+                result.Color = ProviderHealthColor.Red;
+                return result;
+            }
+
+            if (entry.DetailsLoaded == null)
+            {
+                result.Reason = "Детали квартир никогда не запрашивались";
+                result.Color = ProviderHealthColor.Red;
+                return result;
+            }
+
+            if (entry.AllDetailsComlete == null)
+            {
+                result.Reason = "Детали квартир никогда не загружались полностью";
+                result.Color = ProviderHealthColor.Red;
+                return result;
+            }
+
+            var now = DateTime.Now;
+
+            if ((now - entry.LastUpdate.Value).TotalDays >= 1)
+            {
+                result.Reason = $"Данные не обновлялись с {entry.LastUpdate.Value.ToString(dateTimePattern)}";
+                result.Color = ProviderHealthColor.Red;
+                return result;
+            }
+
+            if ((now - entry.NewIdsLoaded.Value).TotalDays >= 7)
+            {
+                result.Reason = $"Не найдено новых квартир с {entry.NewIdsLoaded.Value.ToString(dateTimePattern)}";
+                result.Color = ProviderHealthColor.Red;
+                return result;
+            }
+
+            if (Math.Abs((entry.NewIdsLoaded.Value - entry.DetailsLoaded.Value).TotalMinutes) >= 30)
+            {
+                result.Reason = $"Детали квартир не загружаются с {entry.DetailsLoaded.Value.ToString(dateTimePattern)}";
+                result.Color = ProviderHealthColor.Red;
+                return result;
+            }
+
+            if (Math.Abs((entry.DetailsLoaded.Value - entry.AllDetailsComlete.Value).TotalMinutes) >= 30)
+            {
+                result.Reason = $"Детали квартир загружаются неполностью с {entry.DetailsLoaded.Value.ToString(dateTimePattern)}";
+                result.Color = ProviderHealthColor.Red;
+                return result;
+            }
+
+            if ((entry.LastUpdate.Value - entry.IdsLoaded.Value).TotalHours >= 2)
+            {
+                result.Reason = $"С последнего обновления не найдено никаких квартир";
+                result.Color = ProviderHealthColor.Yellow;
+                return result;
+            }
+
+            if ((now - entry.NewIdsLoaded.Value).TotalDays >= 3)
+            {
+                result.Reason = $"Не найдено новых квартир с {entry.NewIdsLoaded.Value.ToString(dateTimePattern)}";
+                result.Color = ProviderHealthColor.Yellow;
+                return result;
+            }
+
+            return result;
+        }
+
+        public List<ProviderHealthRating> GetRating()
+        {
+            List<ProviderHealthEntity> providers;
+            using (var db = new WohnungDb())
+            {
+                providers = db.ProviderHealthLogs.ToList();
+            }
+
+            if (!providers.Any())
+            {
+                return new List<ProviderHealthRating>
+                {
+                    GetRatingForEntry(null)
+                };
+            }
+
+            var ratings = providers.Select(GetRatingForEntry)
+                .OrderBy(p => p.Entry.ProviderName)
+                .ToList();
+
+            return ratings;
+        }
+
+        public ProviderHealthRating GetRatingAll()
+        {
+            var rating = GetRating();
+
+            var ratings = rating
+                .OrderByDescending(p => (int)p.Color)
+                .ToList();
+
+            return ratings.First();
         }
     }
 }
