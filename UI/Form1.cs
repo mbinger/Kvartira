@@ -2,6 +2,7 @@
 using Data;
 using Newtonsoft.Json;
 using Providers;
+using Providers.Degewo;
 using Providers.Gewobag;
 using System;
 using System.Collections.Generic;
@@ -62,7 +63,8 @@ namespace UI
             var downloader = new HttpDownloader(log, appConfig);
             providers = new IProvider[]
             {
-                new GewobagProvider(downloader, log)
+                new GewobagProvider(downloader, log),
+                new DegewoProvider(downloader, log)
             };
 
             director = new Director(appConfig, providers, log);

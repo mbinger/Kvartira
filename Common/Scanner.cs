@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Globalization;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Common
@@ -32,6 +31,22 @@ namespace Common
             return decimal.TryParse(str.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture, out var result) ? result : null;
         }
 
+        public static bool? ParseBool(string str)
+        {
+            if (string.IsNullOrEmpty(str))
+            {
+                return null;
+            }
+
+            var strLower = str.ToLower();
+            if (strLower == "true" || strLower == "1")
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         public static DateTime? ParseDate(string str)
         {
             if (string.IsNullOrEmpty(str))
@@ -42,36 +57,57 @@ namespace Common
                 ? result : null;
         }
 
-        public static async Task<string> ParseSafeAsync(Regex regex, string property, string html, string description, Log log)
+        public static async Task<string> ParseSafeAsync(Parser parser, string property, string html, string description, Log log)
         {
-            var task1 = Task.Run(() => regex.Match(html).Groups["value"].Value);
-            var task2 = Task.Delay(10000);
-            var result = await Task.WhenAny(task1, task2);
-            if (result == task2)
+            if (parser == null)
             {
-                await log.LogAsync($"TIMEOUT parsing {property} from {description}");
                 return null;
             }
 
-            return await task1;
+            string result = html;
+
+            if (parser.Regex != null)
+            {
+                var task1 = Task.Run(() => parser.Regex.Match(html).Groups["value"].Value);
+                var task2 = Task.Delay(10000);
+                var taskResult = await Task.WhenAny(task1, task2);
+                if (taskResult == task2)
+                {
+                    await log.LogAsync($"TIMEOUT parsing {property} from {description}");
+                    return null;
+                }
+                result = await task1;
+            }
+            if (parser.Transform != null)
+            {
+                result = parser.Transform(result);
+            }
+
+            return result;
         }
 
-        public static async Task<decimal?> ParseSafeDecimalAsync(Regex regex, string property, string html, string description, Log log)
+        public static async Task<decimal?> ParseSafeDecimalAsync(Parser parser, string property, string html, string description, Log log)
         {
-            var str = await ParseSafeAsync(regex, property, html, description, log);
+            var str = await ParseSafeAsync(parser, property, html, description, log);
             return ParseDecimal(str);
         }
 
-        public static async Task<int?> ParseSafeIntAsync(Regex regex, string property, string html, string description, Log log)
+        public static async Task<int?> ParseSafeIntAsync(Parser parser, string property, string html, string description, Log log)
         {
-            var str = await ParseSafeAsync(regex, property, html, description, log);
+            var str = await ParseSafeAsync(parser, property, html, description, log);
             return ParseInt(str);
         }
 
-        public static async Task<DateTime?> ParseSafeDateAsync(Regex regex, string property, string html, string description, Log log)
+        public static async Task<DateTime?> ParseSafeDateAsync(Parser parser, string property, string html, string description, Log log)
         {
-            var str = await ParseSafeAsync(regex, property, html, description, log);
+            var str = await ParseSafeAsync(parser, property, html, description, log);
             return ParseDate(str);
+        }
+
+        public static async Task<bool?> ParseSafeBoolAsync(Parser parser, string property, string html, string description, Log log)
+        {
+            var str = await ParseSafeAsync(parser, property, html, description, log);
+            return ParseBool(str);
         }
     }
 }

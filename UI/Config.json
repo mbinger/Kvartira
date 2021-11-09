@@ -16,18 +16,42 @@
   "SearchConfig": [
     {
       "ProviderName": "GEWOBAG",
-      "DescriptionShort": "Gewobag test",
+      "DescriptionShort": "Gewobag Köpenick",
+      "DescriptionLong": "Gewobag Köpenick - ohne WBS, 3/4 Zimmer, Balkon, Aufzug, kein EG",
+      "SearchUrl": "https://www.gewobag.de/fuer-mieter-und-mietinteressenten/mietangebote/?bezirke%5B%5D=treptow-koepenick&bezirke%5B%5D=treptow-koepenick-alt-treptow&nutzungsarten%5B%5D=wohnung&sort-by=recent&gesamtmiete_von=&gesamtmiete_bis=&gesamtflaeche_von=&gesamtflaeche_bis=&zimmer_von=3&zimmer_bis=4&aufzug=1&keineg=1&balkon=1&keinwbs=1",
+      "Importance": 10,
+      "Active": true
+    },
+    {
+      "ProviderName": "GEWOBAG",
+      "DescriptionShort": "Gewobag alles",
       "DescriptionLong": "Gewobag alles",
       "SearchUrl": "https://www.gewobag.de/fuer-mieter-und-mietinteressenten/mietangebote/?bezirke_all=&bezirke%5B%5D=charlottenburg-wilmersdorf&bezirke%5B%5D=charlottenburg-wilmersdorf-charlottenburg&bezirke%5B%5D=charlottenburg-wilmersdorf-nord&bezirke%5B%5D=charlottenburg-wilmersdorf-grunewald&bezirke%5B%5D=friedrichshain-kreuzberg&bezirke%5B%5D=friedrichshain-kreuzberg-friedrichshain&bezirke%5B%5D=friedrichshain-kreuzberg-kreuzberg&bezirke%5B%5D=lichtenberg&bezirke%5B%5D=lichtenberg-alt-hohenschoenhausen&bezirke%5B%5D=lichtenberg-falkenberg&bezirke%5B%5D=lichtenberg-fennpfuhl&bezirke%5B%5D=lichtenberg-friedrichsfelde&bezirke%5B%5D=marzahn-hellersdorf&bezirke%5B%5D=marzahn-hellersdorf-marzahn&bezirke%5B%5D=mitte&bezirke%5B%5D=mitte-tiergarten&bezirke%5B%5D=neukoelln&bezirke%5B%5D=neukoelln-britz&bezirke%5B%5D=neukoelln-buckow&bezirke%5B%5D=neukoelln-rudow&bezirke%5B%5D=pankow&bezirke%5B%5D=pankow-prenzlauer-berg&bezirke%5B%5D=reinickendorf&bezirke%5B%5D=reinickendorf-hermsdorf&bezirke%5B%5D=reinickendorf-tegel&bezirke%5B%5D=reinickendorf-waidmannslust&bezirke%5B%5D=spandau&bezirke%5B%5D=spandau-haselhorst&bezirke%5B%5D=spandau-staaken&bezirke%5B%5D=spandau-wilhelmstadt&bezirke%5B%5D=steglitz-zehlendorf&bezirke%5B%5D=steglitz-zehlendorf-lichterfelde&bezirke%5B%5D=steglitz-zehlendorf-zehlendorf&bezirke%5B%5D=tempelhof-schoeneberg&bezirke%5B%5D=tempelhof-schoeneberg-mariendorf&bezirke%5B%5D=tempelhof-schoeneberg-schoeneberg&bezirke%5B%5D=treptow-koepenick&bezirke%5B%5D=treptow-koepenick-alt-treptow&nutzungsarten%5B%5D=wohnung&sort-by=recent",
       "Importance": 0,
       "Active": true
     },
     {
-      "ProviderName": "GEWOBAG",
-      "DescriptionShort": "Gewobag Köpenick",
-      "DescriptionLong": "Gewobag Köpenick - ohne WBS, 3/4 Zimmer, Balkon, Aufzug, kein EG",
-      "SearchUrl": "https://www.gewobag.de/fuer-mieter-und-mietinteressenten/mietangebote/?bezirke%5B%5D=treptow-koepenick&bezirke%5B%5D=treptow-koepenick-alt-treptow&nutzungsarten%5B%5D=wohnung&sort-by=recent&gesamtmiete_von=&gesamtmiete_bis=&gesamtflaeche_von=&gesamtflaeche_bis=&zimmer_von=3&zimmer_bis=4&aufzug=1&keineg=1&balkon=1&keinwbs=1",
+      "ProviderName": "DEGEWO",
+      "DescriptionShort": "Degewo Köpenick1",
+      "DescriptionLong": "Degewo Köpenick - ohne WBS, 3/4 Zimmer, Balkon, Aufzug",
+      "SearchUrl": "https://immosuche.degewo.de/de/search?size=10&page=1&property_type_id=1&categories%5B%5D=1&lat=&lon=&area=&address%5Bstreet%5D=&address%5Bcity%5D=&address%5Bzipcode%5D=&address%5Bdistrict%5D=&district=7&property_number=&price_switch=true&price_radio=null&price_from=&price_to=&qm_radio=null&qm_from=&qm_to=&rooms_radio=custom&rooms_from=3&rooms_to=4&features%5B%5D=1&features%5B%5D=5&wbs_required=false&order=rent_total_without_vat_asc",
       "Importance": 10,
+      "Active": true
+    },
+    {
+      "ProviderName": "DEGEWO",
+      "DescriptionShort": "Degewo Köpenick2",
+      "DescriptionLong": "Degewo Köpenick - ohne WBS, 3/4 Zimmer, Balkon egal, Aufzug egal",
+      "SearchUrl": "https://immosuche.degewo.de/de/search?size=10&page=1&property_type_id=1&categories%5B%5D=1&lat=&lon=&area=&address%5Bstreet%5D=&address%5Bcity%5D=&address%5Bzipcode%5D=&address%5Bdistrict%5D=&district=7&property_number=&price_switch=true&price_radio=null&price_from=&price_to=&qm_radio=null&qm_from=&qm_to=&rooms_radio=custom&rooms_from=3&rooms_to=4&wbs_required=false&order=rent_total_without_vat_asc",
+      "Importance": 9,
+      "Active": true
+    },
+    {
+      "ProviderName": "DEGEWO",
+      "DescriptionShort": "Degewo alles",
+      "DescriptionLong": "Degewo alles",
+      "SearchUrl": "https://immosuche.degewo.de/de/search?size=10&page=1&property_type_id=1&categories%5B%5D=1&lat=&lon=&area=&address%5Bstreet%5D=&address%5Bcity%5D=&address%5Bzipcode%5D=&address%5Bdistrict%5D=&district=33%2C+46%2C+3%2C+2%2C+28%2C+29%2C+71%2C+64%2C+4-8%2C+58%2C+60%2C+7%2C+40-67&property_number=&price_switch=true&price_radio=null&price_from=&price_to=&qm_radio=null&qm_from=&qm_to=&rooms_radio=null&rooms_from=&rooms_to=&wbs_required=&order=rent_total_without_vat_asc",
+      "Importance": 0,
       "Active": true
     }
   ]

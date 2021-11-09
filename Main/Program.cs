@@ -2,9 +2,11 @@
 using Data;
 using Newtonsoft.Json;
 using Providers;
+using Providers.Degewo;
 using Providers.Gewobag;
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Main
@@ -33,18 +35,19 @@ namespace Main
 
             var log = new Log(appConfig);
 
-            //var downloader = new HttpDownloader(log, appConfig);
-            
+            var downloader = new HttpDownloader(log, appConfig);
+            /*
             var downloader = new DumpDownloader(appConfig, new[]
             {
                 "2021_11_04_11_19_30_GEWOBAG_details_0100-02571-0103-0124.htm",
             });
+            */
 
-            var gewobag = new GewobagProvider(downloader, log);
-            var providers = new IProvider[]
-            {
-                gewobag
-            };
+
+            var provider = new DegewoProvider(downloader, log);
+
+            var search = appConfig.SearchConfig.FirstOrDefault(p => p.ProviderName == provider.Name);
+            var index = await provider.LoadIndexAsync(search);
 
             //var director = new Director(appConfig, providers, log);
 
@@ -62,7 +65,7 @@ namespace Main
                 SearchUrl = "",
                 Active = true
             });*/
-            var details = await gewobag.LoadDetailsAsync("0100-02571-0103-0124");
+            //var details = await gewobag.LoadDetailsAsync("0100-02571-0103-0124");
         }
     }
 }
