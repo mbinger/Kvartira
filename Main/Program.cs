@@ -47,7 +47,8 @@ namespace Main
             var provider = new DegewoProvider(downloader, log);
 
             var search = appConfig.SearchConfig.FirstOrDefault(p => p.ProviderName == provider.Name);
-            var index = await provider.LoadIndexAsync(search);
+            //var index = await provider.LoadIndexAsync(search);
+            var card = await provider.LoadDetailsAsync("W3110-02304-0197-0201");
 
             //var director = new Director(appConfig, providers, log);
 

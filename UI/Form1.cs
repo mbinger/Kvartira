@@ -7,6 +7,7 @@ using Providers.Gewobag;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -214,7 +215,7 @@ namespace UI
             nextQueryTimer.Enabled = true;
             poolingfTimer.Interval = interval;
             poolingfTimer.Enabled = true;
-            downloadNowButton.Enabled = true;
+            startDownloadDataToolStripMenuItem.Enabled = true;
             loadingTimer.Enabled = false;
             loadingTimerValue.Visible = false;
             loadingTimerText.Visible = false;
@@ -232,7 +233,7 @@ namespace UI
             poolingfTimer.Enabled = false;
             nextQueryTimer.Enabled = false;
             nextQueryValue.Text = "сейчас";
-            downloadNowButton.Enabled = false;
+            startDownloadDataToolStripMenuItem.Enabled = false;
             StartLoading = DateTime.Now;
             loadingTimer.Enabled = true;
             nextQueryText.Visible = nextQueryValue.Visible = false;
@@ -268,11 +269,6 @@ namespace UI
             }
 
             nextQueryValue.Text = text;
-        }
-
-        private void downloadNowButton_Click(object sender, EventArgs e)
-        {
-            poolingfTimer_Tick(sender, e);
         }
 
         private void backgroundWorker1_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
@@ -385,6 +381,157 @@ namespace UI
         {
             var form = new ProvidersHealthForm(director);
             form.ShowDialog(this);
+        }
+
+        private void startDownloadDataToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            poolingfTimer_Tick(sender, e);
+        }
+
+        private void exportDataToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (saveFileDialog1.ShowDialog() != DialogResult.OK)
+                {
+                    return;
+                }
+
+                List<WohnungHeaderEntity> headers;
+                List<WohnungDetailsEntity> details;
+
+                using (var db = new WohnungDb())
+                {
+                    headers = db.WohnungHeaders.ToList();
+                    details = db.WohnungDetails.ToList();
+                }
+
+                var export = new List<WohnungExportItem>();
+                foreach (var header in headers)
+                {
+                    var item = new WohnungExportItem
+                    {
+                        Provider = header.Provider,
+                        WohnungId = header.WohnungId,
+                        Wichtigkeit = header.Wichtigkeit,
+                        SucheShort = header.SucheShort,
+                        SucheDetails = header.SucheDetails,
+                        Geladen = header.Geladen,
+                        Gesehen = header.Gesehen,
+                        Gemeldet = header.Gemeldet,
+                        LoadDetailsTries = header.LoadDetailsTries,
+                        Details = false
+                    };
+
+                    export.Add(item);
+
+                    var detail = details.FirstOrDefault(p => p.WohnungHeaderId == header.Id);
+                    if (detail == null)
+                    {
+                        continue;
+                    }
+
+                    item.Details = true;
+
+                    item.Ueberschrift = detail.Ueberschrift;
+                    item.Bezirk = detail.Bezirk;
+                    item.Anschrift = detail.Anschrift;
+                    item.MieteKalt = detail.MieteKalt;
+                    item.MieteWarm = detail.MieteWarm;
+                    item.Etage = detail.Etage;
+                    item.Etagen = detail.Etagen;
+                    item.Zimmer = detail.Zimmer;
+                    item.Flaeche = detail.Flaeche;
+                    item.FreiAb = detail.FreiAb;
+                    item.Beschreibung = detail.Beschreibung;
+                    item.Wbs = detail.Wbs;
+                    item.Balkon = detail.Balkon;
+                    item.Keller = detail.Keller;
+                }
+
+                var fileName = saveFileDialog1.FileName;
+
+                var content = JsonConvert.SerializeObject(export, Formatting.Indented);
+
+                File.WriteAllText(fileName, content);
+
+                Process.Start("notepad.exe", fileName);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+        }
+
+        private void importDataToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (openFileDialog1.ShowDialog() != DialogResult.OK)
+                {
+                    return;
+                }
+
+                var content = File.ReadAllText(openFileDialog1.FileName);
+                var import = JsonConvert.DeserializeObject<List<WohnungExportItem>>(content);
+                var imported = 0;
+                using (var db = new WohnungDb())
+                {
+                    foreach (var item in import)
+                    {
+                        var dbHeaders = db.WohnungHeaders.ToList();
+                        var dbItem = dbHeaders.FirstOrDefault(p => p.Provider == item.Provider && p.WohnungId == item.WohnungId);
+                        if (dbItem != null)
+                        {
+                            return;
+                        }
+
+                        imported++;
+
+                        var header = new WohnungHeaderEntity
+                        {
+                            Provider = item.Provider,
+                            WohnungId = item.WohnungId,
+                            Wichtigkeit = item.Wichtigkeit,
+                            SucheShort = item.SucheShort,
+                            SucheDetails = item.SucheDetails,
+                            Geladen = item.Geladen,
+                            Gesehen = item.Gesehen,
+                            Gemeldet = item.Gemeldet,
+                            LoadDetailsTries = item.LoadDetailsTries
+                        };
+
+                        var details = new WohnungDetailsEntity
+                        {
+                            WohnungHeader = header,
+
+                            Ueberschrift = item.Ueberschrift,
+                            Bezirk = item.Bezirk,
+                            Anschrift = item.Anschrift,
+                            MieteKalt = item.MieteKalt,
+                            MieteWarm = item.MieteWarm,
+                            Etage = item.Etage,
+                            Etagen = item.Etagen,
+                            Zimmer = item.Zimmer,
+                            Flaeche = item.Flaeche,
+                            FreiAb = item.FreiAb,
+                            Beschreibung = item.Beschreibung,
+                            Wbs = item.Wbs,
+                            Balkon = item.Balkon,
+                            Keller = item.Keller,
+                        };
+
+                        db.WohnungHeaders.Add(header);
+                        db.WohnungDetails.Add(details);
+                    }
+
+                    db.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
         }
     }
 }
