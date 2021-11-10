@@ -24,22 +24,14 @@ namespace Common
             return Task.CompletedTask;
         }
 
-        public async Task<Response> GetAsync(string url, string description, bool deflate)
+        public static async Task<Response> ReadDumpAsync(string url, string dump, bool deflate)
         {
-            if (index >= dumpFiles.Length)
-            {
-                throw new Exception("Dumps cache empty");
-            }
-
-            var fileName = dumpFiles[index];
-            var path = Path.Combine(appConfig.DumpFolder, fileName);
-
             var regexTrimStart = new Regex("^<!--");
             var regexTrimEnd = new Regex("-->$");
 
             Response result;
 
-            using (var textReader = new StreamReader(path))
+            using (var textReader = new StringReader(dump))
             {
                 var urlText = await textReader.ReadLineAsync();
                 var httpStatusCodeText = await textReader.ReadLineAsync();
@@ -79,8 +71,6 @@ namespace Common
                     };
                 }
 
-                index++;
-
                 if (deflate)
                 {
                     result.Content = Scanner.DeflateHtml(result.Content);
@@ -90,7 +80,25 @@ namespace Common
             }
         }
 
-        public static async Task WriteDumpAsync(AppConfig appConfig, Log log, Response response, string description)
+        public async Task<Response> GetAsync(string url, string description, bool deflate)
+        {
+            if (index >= dumpFiles.Length)
+            {
+                throw new Exception("Dumps cache empty");
+            }
+
+            var fileName = dumpFiles[index];
+            index++;
+            var path = Path.Combine(appConfig.DumpFolder, fileName);
+
+            using (var textReader = new StreamReader(path))
+            {
+                var dump = await textReader.ReadToEndAsync();
+                return await ReadDumpAsync(url, dump, deflate);
+            }
+        }
+
+        public static void WriteDump(AppConfig appConfig, ILog log, Response response, string description)
         {
             try
             {
@@ -113,11 +121,11 @@ namespace Common
                 content.AppendLine($"<!--{response.Exception?.Replace("\n", "")?.Replace("\r", "")}-->");
                 content.AppendLine(response.Content);
 
-                await File.WriteAllTextAsync(path, content.ToString());
+                File.WriteAllText(path, content.ToString());
             }
             catch (Exception ex)
             {
-                await log.LogAsync($"Error dumping content\n {ex}");
+                log.Write($"Error dumping content\n {ex}");
             }
         }
     }

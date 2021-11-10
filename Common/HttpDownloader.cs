@@ -1,20 +1,19 @@
 ﻿using System;
 using System.IO;
 using System.Net;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Common
 {
     public class HttpDownloader: IDownloader
     {
-        private readonly Log log;
+        private readonly ILog log;
         private readonly AppConfig appConfig;
         private string userAgent;
         private CookieContainer cookieContainer;
         private Random random;
 
-        public HttpDownloader(Log log, AppConfig appConfig)
+        public HttpDownloader(ILog log, AppConfig appConfig)
         {
             this.log = log;
             this.appConfig = appConfig;
@@ -23,7 +22,10 @@ namespace Common
 
         private void Setup()
         {
-            cookieContainer ??= new CookieContainer();
+            if (cookieContainer == null)
+            {
+                cookieContainer = new CookieContainer();
+            }
             if (string.IsNullOrEmpty(userAgent))
             {
                 var count = appConfig.UserAgents.Length;
@@ -86,16 +88,16 @@ namespace Common
             }
             catch (Exception ex)
             {
-                await log.LogAsync($"Error downloading content from {url} description {description}: \n{ex}");
+                log.Write($"Error downloading content from {url} description {description}: \n{ex}");
                 result.Exception = ex.ToString();
             }
 
-            await DumpDownloader.WriteDumpAsync(appConfig, log, result, description);
+            DumpDownloader.WriteDump(appConfig, log, result, description);
 
             if (deflate && !string.IsNullOrEmpty(result.Content))
             {
                 result.Content = Scanner.DeflateHtml(result.Content);
-                await DumpDownloader.WriteDumpAsync(appConfig, log, result, description + "_deflated");
+                DumpDownloader.WriteDump(appConfig, log, result, description + "_deflated");
             }
 
             return result;

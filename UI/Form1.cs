@@ -89,19 +89,11 @@ namespace UI
 
         private void toolStripButtonRefresh_Click(object sender, EventArgs e)
         {
-            var importance = Scanner.ParseInt(toolStripTextBoxRating.Text) ?? 0;
-            toolStripTextBoxRating.Text = importance.ToString();
+            BindItemsToGrid(null);
+        }
 
-            int? rooms = null;
-            if (!string.IsNullOrEmpty(roomsTextBox.Text))
-            {
-                rooms = Scanner.ParseInt(roomsTextBox.Text);
-                if (rooms == null)
-                {
-                    roomsTextBox.Text = "";
-                }
-            }
-
+        private void BindItemsToGrid(List<int> requiredIds)
+        {
             dataGridView1.Rows.Clear();
 
             List<WohnungHeaderEntity> headers;
@@ -109,21 +101,42 @@ namespace UI
 
             using (var db = new WohnungDb())
             {
-                var query = db.WohnungHeaders.Where(p => p.Wichtigkeit >= importance);
-                if (StatusToolStripComboBox.SelectedIndex == 0)
+                var query = db.WohnungHeaders.AsQueryable();
+                
+                if (requiredIds?.Any() == true)
                 {
-                    //только новые
-                    query = query.Where(p => p.Gesehen == null);
-                }
-                if (wbsComboBox.SelectedIndex == 0)
+                    query = query.Where(p => requiredIds.Contains(p.Id));
+                }else
                 {
-                    //без WBS
-                    query = query.Where(p => !p.Details.Any(d => d.Wbs == true));
-                }
-                if (rooms != null)
-                {
-                    //кол-во комнат
-                    query = query.Where(p => !p.Details.Any() || p.Details.Any(d => d.Zimmer == null || d.Zimmer >= rooms.Value));
+                    var importance = Scanner.ParseInt(toolStripTextBoxRating.Text) ?? 0;
+                    toolStripTextBoxRating.Text = importance.ToString();
+
+                    int? rooms = null;
+                    if (!string.IsNullOrEmpty(roomsTextBox.Text))
+                    {
+                        rooms = Scanner.ParseInt(roomsTextBox.Text);
+                        if (rooms == null)
+                        {
+                            roomsTextBox.Text = "";
+                        }
+                    }
+
+                    query = query.Where(p => p.Wichtigkeit >= importance);
+                    if (StatusToolStripComboBox.SelectedIndex == 0)
+                    {
+                        //только новые
+                        query = query.Where(p => p.Gesehen == null);
+                    }
+                    if (wbsComboBox.SelectedIndex == 0)
+                    {
+                        //без WBS
+                        query = query.Where(p => !p.Details.Any(d => d.Wbs == true));
+                    }
+                    if (rooms != null)
+                    {
+                        //кол-во комнат
+                        query = query.Where(p => !p.Details.Any() || p.Details.Any(d => d.Zimmer == null || d.Zimmer >= rooms.Value));
+                    }
                 }
 
                 headers = query.ToList();
@@ -142,7 +155,6 @@ namespace UI
                 return val.Value ? "Да" : "";
             }
 
-
             foreach (var header in headers)
             {
                 var detail = details.FirstOrDefault(p => p.WohnungHeaderId == header.Id);
@@ -156,9 +168,9 @@ namespace UI
                     detail?.Bezirk,
                     detail?.Anschrift,
                     detail?.Ueberschrift,
-                    header.Wichtigkeit, 
+                    header.Wichtigkeit,
                     formatBool(detail?.Balkon),
-                    header.Gesehen?.ToString("dd.MM.yyyy"), 
+                    header.Gesehen?.ToString("dd.MM.yyyy"),
                     "открыть");
             }
 
@@ -280,7 +292,7 @@ namespace UI
             }
             catch (Exception ex)
             {
-                log.LogAsync("ERROR pooling:\n" + ex.ToString()).GetAwaiter().GetResult();
+                log.Write("ERROR pooling:\n" + ex.ToString());
             }
 
         }
@@ -330,8 +342,15 @@ namespace UI
 
         private List<int> GetIdsFromCurrentView()
         {
-            var ids = dataGridView1.Rows.Cast<DataGridViewRow>().Select(p => int.Parse((string)p.Cells[IdColumn.Index].Value)).ToList();
-            return ids;
+            var result = new List<int>();
+
+            foreach (DataGridViewRow row in dataGridView1.Rows)
+            {
+                var cellValue = row.Cells[IdColumn.Index].Value.ToString();
+                var id = int.Parse(cellValue);
+                result.Add(id);
+            }
+            return result;
         }
 
         private void buttonMarkAllAsRead_Click(object sender, EventArgs e)
@@ -352,6 +371,8 @@ namespace UI
                 }
                 db.SaveChanges();
             }
+
+            BindItemsToGrid(ids);
         }
 
         private void ShowProvidersRating()

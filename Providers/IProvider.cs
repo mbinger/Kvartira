@@ -51,9 +51,9 @@ namespace Providers
 
     public interface IProvider
     {
-        public string Name { get; }
-        public Task<LoadIdsResult> LoadIndexAsync(Search config);
-        public Task<WohnungCard> LoadDetailsAsync(string wohnungId);
-        public string GetOpenDetailsUrl(string wohnungId);
+        string Name { get; }
+        Task<LoadIdsResult> LoadIndexAsync(Search config);
+        Task<WohnungCard> LoadDetailsAsync(string wohnungId);
+        string GetOpenDetailsUrl(string wohnungId);
     }
 }

@@ -9,7 +9,7 @@ namespace Providers.Gewobag
 {
     public class GewobagProvider : ProviderBase
     {
-        public GewobagProvider(IDownloader downloader, Log log) : base(downloader, log)
+        public GewobagProvider(IDownloader downloader, ILog log) : base(downloader, log)
         {
         }
         
@@ -42,11 +42,11 @@ namespace Providers.Gewobag
             return ids.Where(p => p != "page").ToList();
         }
 
-        protected override async Task<WohnungCard> ParseDetailsAsync(string detailsContent, string wohnungId)
+        protected override async Task<WohnungCard> ParseDetailsAsync(string detailsContent, string wohnungId, string description)
         {
-            var card = await base.ParseDetailsAsync(detailsContent, wohnungId);
+            var card = await base.ParseDetailsAsync(detailsContent, wohnungId, description);
 
-            card.Wbs = card.Header.Contains("WBS", StringComparison.InvariantCultureIgnoreCase);
+            card.Wbs = card.Header.ToUpper().Contains("WBS");
 
             card.Complete = !string.IsNullOrEmpty(card.Header) &&
                             !string.IsNullOrEmpty(card.Anschrift) &&

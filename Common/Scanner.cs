@@ -19,7 +19,13 @@ namespace Common
             {
                 return null;
             }
-            return int.TryParse(str, out var result) ? result : null;
+            
+            if (int.TryParse(str, out var result))
+            {
+                return result;
+            }
+
+            return null;
         }
 
         public static decimal? ParseDecimal(string str)
@@ -28,7 +34,13 @@ namespace Common
             {
                 return null;
             }
-            return decimal.TryParse(str.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture, out var result) ? result : null;
+            
+            if (decimal.TryParse(str.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture, out var result))
+            {
+                return result;
+            }
+
+            return null;
         }
 
         public static bool? ParseBool(string str)
@@ -53,11 +65,16 @@ namespace Common
             {
                 return null;
             }
-            return DateTime.TryParseExact(str, "dd.MM.yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var result)
-                ? result : null;
+            
+            if (DateTime.TryParseExact(str, "dd.MM.yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var result))
+            {
+                return result;
+            }
+
+            return null;
         }
 
-        public static async Task<string> ParseSafeAsync(Parser parser, string property, string html, string description, Log log)
+        public static async Task<string> ParseSafeAsync(Parser parser, string property, string html, string description, ILog log)
         {
             if (parser == null)
             {
@@ -73,7 +90,7 @@ namespace Common
                 var taskResult = await Task.WhenAny(task1, task2);
                 if (taskResult == task2)
                 {
-                    await log.LogAsync($"TIMEOUT parsing {property} from {description}");
+                    log.Write($"TIMEOUT parsing {property} from {description}");
                     return null;
                 }
                 result = await task1;
@@ -86,25 +103,25 @@ namespace Common
             return result;
         }
 
-        public static async Task<decimal?> ParseSafeDecimalAsync(Parser parser, string property, string html, string description, Log log)
+        public static async Task<decimal?> ParseSafeDecimalAsync(Parser parser, string property, string html, string description, ILog log)
         {
             var str = await ParseSafeAsync(parser, property, html, description, log);
             return ParseDecimal(str);
         }
 
-        public static async Task<int?> ParseSafeIntAsync(Parser parser, string property, string html, string description, Log log)
+        public static async Task<int?> ParseSafeIntAsync(Parser parser, string property, string html, string description, ILog log)
         {
             var str = await ParseSafeAsync(parser, property, html, description, log);
             return ParseInt(str);
         }
 
-        public static async Task<DateTime?> ParseSafeDateAsync(Parser parser, string property, string html, string description, Log log)
+        public static async Task<DateTime?> ParseSafeDateAsync(Parser parser, string property, string html, string description, ILog log)
         {
             var str = await ParseSafeAsync(parser, property, html, description, log);
             return ParseDate(str);
         }
 
-        public static async Task<bool?> ParseSafeBoolAsync(Parser parser, string property, string html, string description, Log log)
+        public static async Task<bool?> ParseSafeBoolAsync(Parser parser, string property, string html, string description, ILog log)
         {
             var str = await ParseSafeAsync(parser, property, html, description, log);
             return ParseBool(str);

@@ -36,9 +36,9 @@ namespace Providers
         protected abstract Parser DetailsKellerParser { get; }
 
         protected readonly IDownloader downloader;
-        protected readonly Log log;
+        protected readonly ILog log;
 
-        public ProviderBase(IDownloader downloader, Log log)
+        public ProviderBase(IDownloader downloader, ILog log)
         {
             this.downloader = downloader;
             this.log = log;
@@ -57,10 +57,8 @@ namespace Providers
             return ids;
         }
 
-        protected virtual async Task<WohnungCard> ParseDetailsAsync(string content, string wohnungId)
+        protected virtual async Task<WohnungCard> ParseDetailsAsync(string content, string wohnungId, string description)
         {
-            var description = $"{Name} - {wohnungId}";
-
             var header = await Scanner.ParseSafeAsync(DetailsHeaderParser, "header", content, description, log);
             var anschrift = await Scanner.ParseSafeAsync(DetailsAnschriftParser, "anschrift", content, description, log);
             var balkon = await Scanner.ParseSafeBoolAsync(DetailsBalkonParser, "balkon", content, description, log);
@@ -96,6 +94,22 @@ namespace Providers
                 Kaution = kaution
             };
 
+            card.Complete = !string.IsNullOrEmpty(card.Header) &&
+                !string.IsNullOrEmpty(card.Anschrift) &&
+                card.Balkon != null &&
+                !string.IsNullOrEmpty(card.Beschreibung) &&
+                !string.IsNullOrEmpty(card.Bezirk) &&
+                card.Etage != null &&
+                card.Etagen != null &&
+                card.Flaeche != null &&
+                card.FreiAb != null &&
+                card.Wbs != null &&
+                card.Keller != null &&
+                card.Zimmer != null &&
+                card.MieteKalt != null &&
+                card.MieteWarm != null &&
+                card.Kaution != null;
+
             return card;
         }
 
@@ -123,7 +137,7 @@ namespace Providers
 
                 var content = await downloader.GetAsync(url, Name + "_" + description + $" page {page}", true);
 
-                await log.LogAsync($"{Name} {description} GET page {page} {url} HTTP {content.HttpStatusCode} {content.Exception}");
+                log.Write($"{Name} {description} GET page {page} {url} HTTP {content.HttpStatusCode} {content.Exception}");
 
                 if (!string.IsNullOrEmpty(content.Exception) || string.IsNullOrEmpty(content.Content))
                 {
@@ -169,7 +183,7 @@ namespace Providers
             }
             catch (Exception ex)
             {
-                await log.LogAsync($"ERROR {GetType().Name}.{nameof(LoadIndexAsync)}\n" + ex.ToString());
+                log.Write($"ERROR {GetType().Name}.{nameof(LoadIndexAsync)}\n" + ex.ToString());
             }
             return null;
         }
@@ -192,29 +206,14 @@ namespace Providers
                     return null;
                 }
 
-                var card = await ParseDetailsAsync(response.Content, wohnungId);
+                var description = $"{Name} - {wohnungId}";
 
-                card.Complete = !string.IsNullOrEmpty(card.Header) &&
-                    !string.IsNullOrEmpty(card.Anschrift) &&
-                    card.Balkon != null &&
-                    !string.IsNullOrEmpty(card.Beschreibung) &&
-                    !string.IsNullOrEmpty(card.Bezirk) &&
-                    card.Etage != null &&
-                    //Etagen gibt es nicht
-                    card.Flaeche != null &&
-                    card.FreiAb != null &&
-                    card.Wbs != null &&
-                    card.Keller != null &&
-                    card.Zimmer != null &&
-                    card.MieteKalt != null &&
-                    card.MieteWarm != null &&
-                    card.Kaution != null;
-
+                var card = await ParseDetailsAsync(response.Content, wohnungId, description);
                 return card;
             }
             catch (Exception ex)
             {
-                await log.LogAsync($"ERROR {GetType().Name}.{nameof(LoadDetailsAsync)}\n" + ex.ToString());
+                log.Write($"ERROR {GetType().Name}.{nameof(LoadDetailsAsync)}\n" + ex.ToString());
             }
 
             return null;

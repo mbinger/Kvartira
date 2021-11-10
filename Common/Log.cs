@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Threading.Tasks;
 
 namespace Common
 {
-    public class Log
+    public class Log: ILog
     {
         private readonly AppConfig appConfig;
 
@@ -14,14 +13,14 @@ namespace Common
             this.appConfig = appConfig;
         }
 
-        public async Task LogAsync(string str)
+        public void Write(string str)
         {
             try
             {
                 var logItem = $"[{DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss")}] {str}";
                 Console.WriteLine(logItem);
                 Debug.WriteLine(logItem);
-                await File.AppendAllLinesAsync(appConfig.LogFile, new[] { logItem });
+                File.AppendAllLines(appConfig.LogFile, new[] { logItem });
             }
             catch (Exception ex)
             {

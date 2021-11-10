@@ -1,11 +1,12 @@
 ﻿using Common;
 using Data;
+using Providers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Providers
+namespace UI
 {
     public class Director
     {
@@ -20,12 +21,12 @@ namespace Providers
             this.log = log;
         }
 
-        private async Task<IProvider> GetProviderByNameAsync(string name)
+        private IProvider GetProviderByName(string name)
         {
             var provider = providers.FirstOrDefault(p => string.Compare(p.Name, name, true) == 0);
             if (provider == null)
             {
-                await log.LogAsync($"Provider '{name}' not founnd");
+                log.Write($"Provider '{name}' not founnd");
             }
 
             return provider;
@@ -43,7 +44,7 @@ namespace Providers
             {
                 try
                 {
-                    var provider = await GetProviderByNameAsync(search.ProviderName);
+                    var provider = GetProviderByName(search.ProviderName);
                     if (provider == null)
                     {
                         continue;
@@ -113,7 +114,7 @@ namespace Providers
                 }
                 catch (Exception ex)
                 {
-                    await log.LogAsync("ERROR Director.LoadAsync\n" + ex);
+                    log.Write("ERROR Director.LoadAsync\n" + ex);
                 }
             }
 
@@ -147,7 +148,7 @@ namespace Providers
 
             foreach (var id in ids)
             {
-                var provider = await GetProviderByNameAsync(id.Provider);
+                var provider = GetProviderByName(id.Provider);
                 if (provider == null)
                 {
                     continue;
@@ -238,7 +239,7 @@ namespace Providers
                 Entry = entry,
                 Color = ProviderHealthColor.Green,
                 Reason = "OK"
-             };
+            };
 
             var dateTimePattern = "dd.MM.yyyy HH:mm";
 
