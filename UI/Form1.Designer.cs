@@ -76,9 +76,12 @@ namespace UI
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.copyIdToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // toolStrip1
@@ -100,26 +103,26 @@ namespace UI
             this.providerHealthButton});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(1117, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(1277, 28);
             this.toolStrip1.TabIndex = 0;
             this.toolStrip1.Text = "toolStrip1";
             // 
             // toolStripLabel1
             // 
             this.toolStripLabel1.Name = "toolStripLabel1";
-            this.toolStripLabel1.Size = new System.Drawing.Size(51, 22);
+            this.toolStripLabel1.Size = new System.Drawing.Size(64, 25);
             this.toolStripLabel1.Text = "Рейтинг";
             // 
             // toolStripTextBoxRating
             // 
             this.toolStripTextBoxRating.Name = "toolStripTextBoxRating";
-            this.toolStripTextBoxRating.Size = new System.Drawing.Size(18, 25);
+            this.toolStripTextBoxRating.Size = new System.Drawing.Size(20, 28);
             this.toolStripTextBoxRating.Text = "1";
             // 
             // toolStripLabel2
             // 
             this.toolStripLabel2.Name = "toolStripLabel2";
-            this.toolStripLabel2.Size = new System.Drawing.Size(64, 22);
+            this.toolStripLabel2.Size = new System.Drawing.Size(80, 25);
             this.toolStripLabel2.Text = "Просмотр";
             // 
             // StatusToolStripComboBox
@@ -129,12 +132,12 @@ namespace UI
             "непросмотренные",
             "все"});
             this.StatusToolStripComboBox.Name = "StatusToolStripComboBox";
-            this.StatusToolStripComboBox.Size = new System.Drawing.Size(88, 25);
+            this.StatusToolStripComboBox.Size = new System.Drawing.Size(100, 28);
             // 
             // toolStripLabel3
             // 
             this.toolStripLabel3.Name = "toolStripLabel3";
-            this.toolStripLabel3.Size = new System.Drawing.Size(31, 22);
+            this.toolStripLabel3.Size = new System.Drawing.Size(40, 25);
             this.toolStripLabel3.Text = "WBS";
             // 
             // wbsComboBox
@@ -144,24 +147,24 @@ namespace UI
             "без WBS",
             "все"});
             this.wbsComboBox.Name = "wbsComboBox";
-            this.wbsComboBox.Size = new System.Drawing.Size(88, 25);
+            this.wbsComboBox.Size = new System.Drawing.Size(100, 28);
             // 
             // toolStripLabel4
             // 
             this.toolStripLabel4.Name = "toolStripLabel4";
-            this.toolStripLabel4.Size = new System.Drawing.Size(67, 22);
+            this.toolStripLabel4.Size = new System.Drawing.Size(85, 25);
             this.toolStripLabel4.Text = "Комнат >=";
             // 
             // roomsTextBox
             // 
             this.roomsTextBox.Name = "roomsTextBox";
-            this.roomsTextBox.Size = new System.Drawing.Size(18, 25);
+            this.roomsTextBox.Size = new System.Drawing.Size(20, 28);
             this.roomsTextBox.Text = "3";
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 28);
             // 
             // toolStripButtonRefresh
             // 
@@ -169,7 +172,7 @@ namespace UI
             this.toolStripButtonRefresh.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonRefresh.Image")));
             this.toolStripButtonRefresh.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonRefresh.Name = "toolStripButtonRefresh";
-            this.toolStripButtonRefresh.Size = new System.Drawing.Size(65, 22);
+            this.toolStripButtonRefresh.Size = new System.Drawing.Size(82, 25);
             this.toolStripButtonRefresh.Text = "Обновить";
             this.toolStripButtonRefresh.Click += new System.EventHandler(this.toolStripButtonRefresh_Click);
             // 
@@ -183,27 +186,27 @@ namespace UI
             this.dataToolStripSplitButton.Image = ((System.Drawing.Image)(resources.GetObject("dataToolStripSplitButton.Image")));
             this.dataToolStripSplitButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.dataToolStripSplitButton.Name = "dataToolStripSplitButton";
-            this.dataToolStripSplitButton.Size = new System.Drawing.Size(66, 22);
+            this.dataToolStripSplitButton.Size = new System.Drawing.Size(82, 25);
             this.dataToolStripSplitButton.Text = "Данные";
             // 
             // startDownloadDataToolStripMenuItem
             // 
             this.startDownloadDataToolStripMenuItem.Name = "startDownloadDataToolStripMenuItem";
-            this.startDownloadDataToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.startDownloadDataToolStripMenuItem.Size = new System.Drawing.Size(249, 26);
             this.startDownloadDataToolStripMenuItem.Text = "Старт загрузки данных";
             this.startDownloadDataToolStripMenuItem.Click += new System.EventHandler(this.startDownloadDataToolStripMenuItem_Click);
             // 
             // exportDataToolStripMenuItem
             // 
             this.exportDataToolStripMenuItem.Name = "exportDataToolStripMenuItem";
-            this.exportDataToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.exportDataToolStripMenuItem.Size = new System.Drawing.Size(249, 26);
             this.exportDataToolStripMenuItem.Text = "Экспорт данных";
             this.exportDataToolStripMenuItem.Click += new System.EventHandler(this.exportDataToolStripMenuItem_Click);
             // 
             // importDataToolStripMenuItem
             // 
             this.importDataToolStripMenuItem.Name = "importDataToolStripMenuItem";
-            this.importDataToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.importDataToolStripMenuItem.Size = new System.Drawing.Size(249, 26);
             this.importDataToolStripMenuItem.Text = "Импорт данных";
             this.importDataToolStripMenuItem.Click += new System.EventHandler(this.importDataToolStripMenuItem_Click);
             // 
@@ -213,7 +216,7 @@ namespace UI
             this.buttonMarkAllAsRead.Image = ((System.Drawing.Image)(resources.GetObject("buttonMarkAllAsRead.Image")));
             this.buttonMarkAllAsRead.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonMarkAllAsRead.Name = "buttonMarkAllAsRead";
-            this.buttonMarkAllAsRead.Size = new System.Drawing.Size(200, 22);
+            this.buttonMarkAllAsRead.Size = new System.Drawing.Size(252, 25);
             this.buttonMarkAllAsRead.Text = "Пометить все как просмотренные";
             this.buttonMarkAllAsRead.Click += new System.EventHandler(this.buttonMarkAllAsRead_Click);
             // 
@@ -224,7 +227,7 @@ namespace UI
             this.providerHealthButton.Image = ((System.Drawing.Image)(resources.GetObject("providerHealthButton.Image")));
             this.providerHealthButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.providerHealthButton.Name = "providerHealthButton";
-            this.providerHealthButton.Size = new System.Drawing.Size(81, 22);
+            this.providerHealthButton.Size = new System.Drawing.Size(103, 25);
             this.providerHealthButton.Text = "Провайдеры";
             this.providerHealthButton.Click += new System.EventHandler(this.providerHealthButton_Click);
             // 
@@ -238,42 +241,43 @@ namespace UI
             this.nextQueryValue,
             this.loadingTimerText,
             this.loadingTimerValue});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 547);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 695);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(1117, 22);
+            this.statusStrip1.Padding = new System.Windows.Forms.Padding(1, 0, 16, 0);
+            this.statusStrip1.Size = new System.Drawing.Size(1277, 26);
             this.statusStrip1.TabIndex = 1;
             this.statusStrip1.Text = "statusStrip1";
             // 
             // toolStripStatusLabel1
             // 
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(66, 17);
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(83, 20);
             this.toolStripStatusLabel1.Text = "Запросов: ";
             // 
             // queriesCountLabel
             // 
             this.queriesCountLabel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.queriesCountLabel.Name = "queriesCountLabel";
-            this.queriesCountLabel.Size = new System.Drawing.Size(14, 17);
+            this.queriesCountLabel.Size = new System.Drawing.Size(18, 20);
             this.queriesCountLabel.Text = "0";
             // 
             // nextQueryText
             // 
             this.nextQueryText.Name = "nextQueryText";
-            this.nextQueryText.Size = new System.Drawing.Size(150, 17);
+            this.nextQueryText.Size = new System.Drawing.Size(188, 20);
             this.nextQueryText.Text = "Следующий запрос через";
             // 
             // nextQueryValue
             // 
             this.nextQueryValue.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.nextQueryValue.Name = "nextQueryValue";
-            this.nextQueryValue.Size = new System.Drawing.Size(38, 17);
+            this.nextQueryValue.Size = new System.Drawing.Size(49, 20);
             this.nextQueryValue.Text = "00:00";
             // 
             // loadingTimerText
             // 
             this.loadingTimerText.Name = "loadingTimerText";
-            this.loadingTimerText.Size = new System.Drawing.Size(55, 17);
+            this.loadingTimerText.Size = new System.Drawing.Size(69, 20);
             this.loadingTimerText.Text = "Загрузка";
             this.loadingTimerText.Visible = false;
             // 
@@ -281,7 +285,7 @@ namespace UI
             // 
             this.loadingTimerValue.Font = new System.Drawing.Font("Segoe UI", 8.765218F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.loadingTimerValue.Name = "loadingTimerValue";
-            this.loadingTimerValue.Size = new System.Drawing.Size(38, 17);
+            this.loadingTimerValue.Size = new System.Drawing.Size(49, 20);
             this.loadingTimerValue.Text = "00:00";
             this.loadingTimerValue.Visible = false;
             // 
@@ -306,15 +310,16 @@ namespace UI
             this.GesehenColumn,
             this.LinkColumn});
             this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataGridView1.Location = new System.Drawing.Point(0, 25);
+            this.dataGridView1.Location = new System.Drawing.Point(0, 28);
+            this.dataGridView1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.ReadOnly = true;
             this.dataGridView1.RowHeadersWidth = 49;
             this.dataGridView1.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             this.dataGridView1.RowTemplate.Height = 25;
-            this.dataGridView1.Size = new System.Drawing.Size(1117, 522);
+            this.dataGridView1.Size = new System.Drawing.Size(1277, 667);
             this.dataGridView1.TabIndex = 2;
-            this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
+            this.dataGridView1.CellMouseUp += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_CellMouseUp);
             // 
             // IdColumn
             // 
@@ -462,14 +467,30 @@ namespace UI
             this.openFileDialog1.Filter = "JSON|*.json";
             this.openFileDialog1.Title = "Импорт данных";
             // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.ImageScalingSize = new System.Drawing.Size(19, 19);
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.copyIdToolStripMenuItem});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(306, 54);
+            // 
+            // copyIdToolStripMenuItem
+            // 
+            this.copyIdToolStripMenuItem.Name = "copyIdToolStripMenuItem";
+            this.copyIdToolStripMenuItem.Size = new System.Drawing.Size(305, 24);
+            this.copyIdToolStripMenuItem.Text = "Скопировать ID в буфер обмена";
+            this.copyIdToolStripMenuItem.Click += new System.EventHandler(this.copyIdToolStripMenuItem_Click);
+            // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 19F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1117, 569);
+            this.ClientSize = new System.Drawing.Size(1277, 721);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.toolStrip1);
+            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Квартиры";
@@ -480,6 +501,7 @@ namespace UI
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -532,6 +554,8 @@ namespace UI
         private System.Windows.Forms.ToolStripMenuItem importDataToolStripMenuItem;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem copyIdToolStripMenuItem;
     }
 }
 

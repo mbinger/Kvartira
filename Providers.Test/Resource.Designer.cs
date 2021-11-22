@@ -64,8 +64,7 @@ namespace Providers.Test {
         ///   Looks up a localized string similar to &lt;!--https://immosuche.degewo.de/de/search?size=10&amp;page=1&amp;property_type_id=1&amp;categories%5B%5D=1&amp;lat=&amp;lon=&amp;area=&amp;address%5Bstreet%5D=&amp;address%5Bcity%5D=&amp;address%5Bzipcode%5D=&amp;address%5Bdistrict%5D=&amp;district=33%2C+46%2C+3%2C+2%2C+28%2C+29%2C+71%2C+64%2C+4-8%2C+58%2C+60%2C+7%2C+40-67&amp;property_number=&amp;price_switch=true&amp;price_radio=null&amp;price_from=&amp;price_to=&amp;qm_radio=null&amp;qm_from=&amp;qm_to=&amp;rooms_radio=null&amp;rooms_from=&amp;rooms_to=&amp;wbs_required=&amp;order=rent_total_without_vat_asc--&gt;
         ///&lt;!--200--&gt;
         ///&lt;!----&gt;
-        ///&lt;!DOCTYPE html&gt;
-        /// [rest of string was truncated]&quot;;.
+        ///&lt;!DOCTYPE html&gt;        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string _2021_11_10_07_03_22_DEGEWO_Degewo_alles_page_1 {
             get {
@@ -77,8 +76,7 @@ namespace Providers.Test {
         ///   Looks up a localized string similar to &lt;!--https://immosuche.degewo.de/de/search?size=10&amp;page=2&amp;property_type_id=1&amp;categories%5B%5D=1&amp;lat=&amp;lon=&amp;area=&amp;address%5Bstreet%5D=&amp;address%5Bcity%5D=&amp;address%5Bzipcode%5D=&amp;address%5Bdistrict%5D=&amp;district=33%2C+46%2C+3%2C+2%2C+28%2C+29%2C+71%2C+64%2C+4-8%2C+58%2C+60%2C+7%2C+40-67&amp;property_number=&amp;price_switch=true&amp;price_radio=null&amp;price_from=&amp;price_to=&amp;qm_radio=null&amp;qm_from=&amp;qm_to=&amp;rooms_radio=null&amp;rooms_from=&amp;rooms_to=&amp;wbs_required=&amp;order=rent_total_without_vat_asc--&gt;
         ///&lt;!--200--&gt;
         ///&lt;!----&gt;
-        ///&lt;!DOCTYPE html&gt;
-        /// [rest of string was truncated]&quot;;.
+        ///&lt;!DOCTYPE html&gt;        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string _2021_11_10_07_03_26_DEGEWO_Degewo_alles_page_2 {
             get {
@@ -90,8 +88,7 @@ namespace Providers.Test {
         ///   Looks up a localized string similar to &lt;!--https://immosuche.degewo.de/de/search?size=10&amp;page=3&amp;property_type_id=1&amp;categories%5B%5D=1&amp;lat=&amp;lon=&amp;area=&amp;address%5Bstreet%5D=&amp;address%5Bcity%5D=&amp;address%5Bzipcode%5D=&amp;address%5Bdistrict%5D=&amp;district=33%2C+46%2C+3%2C+2%2C+28%2C+29%2C+71%2C+64%2C+4-8%2C+58%2C+60%2C+7%2C+40-67&amp;property_number=&amp;price_switch=true&amp;price_radio=null&amp;price_from=&amp;price_to=&amp;qm_radio=null&amp;qm_from=&amp;qm_to=&amp;rooms_radio=null&amp;rooms_from=&amp;rooms_to=&amp;wbs_required=&amp;order=rent_total_without_vat_asc--&gt;
         ///&lt;!--200--&gt;
         ///&lt;!----&gt;
-        ///&lt;!DOCTYPE html&gt;
-        /// [rest of string was truncated]&quot;;.
+        ///&lt;!DOCTYPE html&gt;        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string _2021_11_10_07_03_31_DEGEWO_Degewo_alles_page_3 {
             get {
@@ -112,7 +109,7 @@ namespace Providers.Test {
         ///	This website is powered by TYPO3 - inspiring people to share!
         ///	TYPO3 is a free open source Content Management Framework initially created by Kasper Skaarhoj and licensed under GNU/GPL.
         ///	TYPO3 is copyright 1998-2019 of Kasper Skaarhoj. Extensions are copyright of their respective owners.
-        ///	Information and contribution at https://typo3 [rest of string was truncated]&quot;;.
+        ///	Information and contribution at http [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string _2021_11_10_07_08_42_DEGEWO_details_W1400_40274_0940_0404 {
             get {
@@ -133,11 +130,53 @@ namespace Providers.Test {
         ///	This website is powered by TYPO3 - inspiring people to share!
         ///	TYPO3 is a free open source Content Management Framework initially created by Kasper Skaarhoj and licensed under GNU/GPL.
         ///	TYPO3 is copyright 1998-2019 of Kasper Skaarhoj. Extensions are copyright of their respective owners.
-        ///	Information and contribution at https://typo3 [rest of string was truncated]&quot;;.
+        ///	Information and contribution at http [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string _2021_11_10_07_09_57_DEGEWO_details_W3110_02304_0197_0201 {
             get {
                 return ResourceManager.GetString("_2021_11_10_07_09_57_DEGEWO_details_W3110_02304_0197_0201", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;!--https://immosuche.degewo.de/de/properties/W1400-51813-0012-0304--&gt;
+        ///&lt;!--200--&gt;
+        ///&lt;!----&gt;
+        ///&lt;!DOCTYPE html&gt;
+        ///&lt;html class=&quot;no-js&quot; lang=&quot;de&quot;&gt;
+        ///&lt;head&gt;
+        ///
+        ///&lt;meta charset=&quot;utf-8&quot;&gt;
+        ///&lt;!-- 
+        ///	This website is powered by TYPO3 - inspiring people to share!
+        ///	TYPO3 is a free open source Content Management Framework initially created by Kasper Skaarhoj and licensed under GNU/GPL.
+        ///	TYPO3 is copyright 1998-2019 of Kasper Skaarhoj. Extensions are copyright of their respective owners.
+        ///	Information and contribution at https://typo3 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string _2021_11_10_11_13_56_DEGEWO_details_W1400_51813_0012_0304 {
+            get {
+                return ResourceManager.GetString("_2021_11_10_11_13_56_DEGEWO_details_W1400_51813_0012_0304", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;!--https://immosuche.degewo.de/de/properties/W1150-00427-0207-0503--&gt;
+        ///&lt;!--200--&gt;
+        ///&lt;!----&gt;
+        ///&lt;!DOCTYPE html&gt;
+        ///&lt;html class=&quot;no-js&quot; lang=&quot;de&quot;&gt;
+        ///&lt;head&gt;
+        ///
+        ///&lt;meta charset=&quot;utf-8&quot;&gt;
+        ///&lt;!-- 
+        ///	This website is powered by TYPO3 - inspiring people to share!
+        ///	TYPO3 is a free open source Content Management Framework initially created by Kasper Skaarhoj and licensed under GNU/GPL.
+        ///	TYPO3 is copyright 1998-2019 of Kasper Skaarhoj. Extensions are copyright of their respective owners.
+        ///	Information and contribution at https://typo3 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string _2021_11_10_11_14_12_DEGEWO_details_W1150_00427_0207_0503 {
+            get {
+                return ResourceManager.GetString("_2021_11_10_11_14_12_DEGEWO_details_W1150_00427_0207_0503", resourceCulture);
             }
         }
     }

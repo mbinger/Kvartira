@@ -177,49 +177,6 @@ namespace UI
             dataGridView1.Refresh();
         }
 
-        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.ColumnIndex == LinkColumn.Index)
-            {
-                try
-                {
-                    //open link
-                    var id = int.Parse(dataGridView1.Rows[e.RowIndex].Cells[IdColumn.Index].Value.ToString());
-                    var provider = dataGridView1.Rows[e.RowIndex].Cells[VermieterColumn.Index].Value.ToString();
-                    var wohnungId = dataGridView1.Rows[e.RowIndex].Cells[WohnungColumn.Index].Value.ToString();
-
-                    var url = director.GetOpenDetailsUrl(provider, wohnungId)?.TrimEnd();
-
-                    if (string.IsNullOrEmpty(url))
-                    {
-                        MessageBox.Show("Невозможно открыть");
-                    }
-
-                    var psi = new System.Diagnostics.ProcessStartInfo();
-                    psi.UseShellExecute = true;
-                    psi.FileName = url;
-                    System.Diagnostics.Process.Start(psi);
-
-                    using (var db = new WohnungDb())
-                    {
-                        var entry = db.WohnungHeaders.FirstOrDefault(p => p.Id == id);
-                        if (entry != null)
-                        {
-                            entry.Gesehen = DateTime.Now;
-                            db.SaveChanges();
-
-                            //refresh
-                            dataGridView1.Rows[e.RowIndex].Cells[GesehenColumn.Index].Value = entry.Gesehen?.ToString("dd.MM.yyyy");
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.ToString());
-                }
-            }
-        }
-
         private void EnableTimer()
         {
             var interval = rnd.Next(appConfig.PoolingIntervalMin, appConfig.PoolingIntervalMax);
@@ -349,6 +306,22 @@ namespace UI
                 var cellValue = row.Cells[IdColumn.Index].Value.ToString();
                 var id = int.Parse(cellValue);
                 result.Add(id);
+            }
+            return result;
+        }
+
+        private List<int> GetSelectedIds()
+        {
+            var result = new List<int>();
+
+            foreach (DataGridViewRow row in dataGridView1.Rows)
+            {
+                if (row.Selected)
+                {
+                    var cellValue = row.Cells[IdColumn.Index].Value.ToString();
+                    var id = int.Parse(cellValue);
+                    result.Add(id);
+                }
             }
             return result;
         }
@@ -553,6 +526,75 @@ namespace UI
             {
                 MessageBox.Show(ex.ToString());
             }
+        }
+
+        private void dataGridView1_CellMouseUp(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                //context menu
+                if (GetSelectedIds().Count() <= 1)
+                {
+                    //select current row if nothing selected
+                    foreach (DataGridViewRow row in dataGridView1.Rows)
+                    {
+                        row.Selected = false;
+                    }
+                    dataGridView1.Rows[e.RowIndex].Selected = true;
+                }
+                contextMenuStrip1.Show(this, Cursor.Position.X - this.Left, Cursor.Position.Y - this.Top);
+            }
+            if (e.Button == MouseButtons.Left && e.ColumnIndex == LinkColumn.Index)
+            {
+                //open link
+                try
+                {
+                    var id = int.Parse(dataGridView1.Rows[e.RowIndex].Cells[IdColumn.Index].Value.ToString());
+                    var provider = dataGridView1.Rows[e.RowIndex].Cells[VermieterColumn.Index].Value.ToString();
+                    var wohnungId = dataGridView1.Rows[e.RowIndex].Cells[WohnungColumn.Index].Value.ToString();
+
+                    var url = director.GetOpenDetailsUrl(provider, wohnungId)?.TrimEnd();
+
+                    if (string.IsNullOrEmpty(url))
+                    {
+                        MessageBox.Show("Невозможно открыть");
+                    }
+
+                    var psi = new System.Diagnostics.ProcessStartInfo();
+                    psi.UseShellExecute = true;
+                    psi.FileName = url;
+                    System.Diagnostics.Process.Start(psi);
+
+                    using (var db = new WohnungDb())
+                    {
+                        var entry = db.WohnungHeaders.FirstOrDefault(p => p.Id == id);
+                        if (entry != null)
+                        {
+                            entry.Gesehen = DateTime.Now;
+                            db.SaveChanges();
+
+                            //refresh
+                            dataGridView1.Rows[e.RowIndex].Cells[GesehenColumn.Index].Value = entry.Gesehen?.ToString("dd.MM.yyyy");
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString());
+                }
+            }
+        }
+
+        private void copyIdToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var ids = GetSelectedIds();
+            List<WohnungHeaderEntity> items;
+            using (var db = new WohnungDb())
+            {
+                items = db.WohnungHeaders.Where(p => ids.Contains(p.Id)).ToList();
+            }
+            var msg = string.Join("; ", items.Select(p => $"{p.Provider} {p.WohnungId}"));
+            Clipboard.SetText(msg);
         }
     }
 }

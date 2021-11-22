@@ -35,7 +35,7 @@ namespace Common
                 return null;
             }
             
-            if (decimal.TryParse(str.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture, out var result))
+            if (decimal.TryParse(str.Replace(".", "").Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture, out var result))
             {
                 return result;
             }

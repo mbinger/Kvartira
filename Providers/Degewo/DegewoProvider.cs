@@ -39,13 +39,13 @@ namespace Providers.Degewo
 
         protected override Parser DetailsHeaderParser { get; } = new Parser(new Regex("<h1 class='article__title'>(?<value>[^<]+)</h1>"));
 
-        protected override Parser DetailsGrundMieteParser { get; } = new Parser(new Regex("Nettokaltmiete\\W*(?<value>[\\d,]+)"));
+        protected override Parser DetailsGrundMieteParser { get; } = new Parser(new Regex("Nettokaltmiete\\W*(?<value>[\\d,\\.]+)"));
 
-        protected override Parser DetailsGesamtMieteParser { get; } = new Parser(new Regex("<div class='expose__price-tag'>(?<value>[\\d,]+)"));
+        protected override Parser DetailsGesamtMieteParser { get; } = new Parser(new Regex("<div class='expose__price-tag'>(?<value>[\\d,\\.]+)"));
 
         protected override Parser DetailsKautionParser { get; } = null;
 
-        protected override Parser DetailsAnschriftParser { get; } = new Parser(new Regex("<p class='gallery__lead'>(?<value>[\\w\\d<>\\s]+)</p>"), (content) => content.Replace("<br>", " "));
+        protected override Parser DetailsAnschriftParser { get; } = new Parser(new Regex("<p class='gallery__lead'>(?<value>[\\w\\d<>\\s-\\.]+)</p>"), (content) => content.Replace("<br>", " "));
 
         protected override Parser DetailsBezirkParser { get; } = null;
 
