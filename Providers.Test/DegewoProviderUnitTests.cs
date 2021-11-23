@@ -11,6 +11,28 @@ namespace Providers.Test
     public class DegewoProviderUnitTests
     {
         [Test]
+        public async Task DegewoProvider_WithIndex_ShouldLoadIds()
+        {
+            var expectedIds = "W1100-11902-0010-0110,W1100-11902-0086-0217,W1100-11902-0108-0208,W1100-11902-0186-0404,W1140-00526-0226-0504,W1150-00427-0176-0303,W1150-00427-0202-0302,W1150-00427-0207-0503,W1150-00427-0236-0102,W1150-00427-0239-0202,W1300-20219-0105-0202,W1300-53005-0010-8121,W1300-60710-0054-0510,W1400-06080-0080-0106,W1400-06080-0162-0202,W1400-40109-0810-1107,W1400-40109-1210-1607,W1400-40132-0170-0602,W1400-40274-0940-0404,W1400-40602-0170-0603,W1400-51813-0012-0304,W1400-51813-0015-0309,W3110-02304-0126-0201,W3110-02304-0197-0201".Split(',');
+            var downloader = new ResDownloader(new[] 
+            { 
+                Resource._2021_11_10_07_03_22_DEGEWO_Degewo_alles_page_1,
+                Resource._2021_11_10_07_03_26_DEGEWO_Degewo_alles_page_2,
+                Resource._2021_11_10_07_03_31_DEGEWO_Degewo_alles_page_3
+            });
+            var logMock = new Mock<ILog>(MockBehavior.Loose);
+            var provider = new DegewoProvider(downloader, logMock.Object);
+            
+            var result = await provider.LoadIndexAsync(new Search
+            {
+                SearchUrl = "https://immosuche.degewo.de/de/search?size=10&page=1&property_type_id=1&categories%5B%5D=1&lat=&lon=&area=&address%5Bstreet%5D=&address%5Bcity%5D=&address%5Bzipcode%5D=&address%5Bdistrict%5D=&district=33%2C+46%2C+3%2C+2%2C+28%2C+29%2C+71%2C+64%2C+4-8%2C+58%2C+60%2C+7%2C+40-67&property_number=&price_switch=true&price_radio=null&price_from=&price_to=&qm_radio=null&qm_from=&qm_to=&rooms_radio=null&rooms_from=&rooms_to=&wbs_required=&order=rent_total_without_vat_asc"
+            });
+
+            Assert.AreEqual(3, result.PagesCount);
+            CollectionAssert.AreEquivalent(expectedIds, result.WohnungIds);
+        }
+
+        [Test]
         public async Task DegewoProvider_WithDetails1_ShouldLoadDetails()
         {
             var downloader = new ResDownloader(new[] { Resource._2021_11_10_07_08_42_DEGEWO_details_W1400_40274_0940_0404 });

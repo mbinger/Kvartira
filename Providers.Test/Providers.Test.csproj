@@ -55,6 +55,11 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression, Version=4.1.2.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.Compression.4.3.0\lib\net46\System.IO.Compression.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.3\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
@@ -73,6 +78,13 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Html\2021_11_10_07_03_22_DEGEWO_Degewo alles page 1.zip" />
+    <None Include="Html\2021_11_10_07_03_26_DEGEWO_Degewo alles page 2.zip" />
+    <None Include="Html\2021_11_10_07_03_31_DEGEWO_Degewo alles page 3.zip" />
+    <None Include="Html\2021_11_10_07_08_42_DEGEWO_details_W1400-40274-0940-0404.zip" />
+    <None Include="Html\2021_11_10_07_09_57_DEGEWO_details_W3110-02304-0197-0201.zip" />
+    <None Include="Html\2021_11_10_11_13_56_DEGEWO_details_W1400-51813-0012-0304.zip" />
+    <None Include="Html\2021_11_10_11_14_12_DEGEWO_details_W1150-00427-0207-0503.zip" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

@@ -119,24 +119,24 @@
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="_2021_11_10_07_03_22_DEGEWO_Degewo_alles_page_1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Html\2021_11_10_07_03_22_DEGEWO_Degewo alles page 1.htm;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <value>Html\2021_11_10_07_03_22_DEGEWO_Degewo alles page 1.zip;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="_2021_11_10_07_03_26_DEGEWO_Degewo_alles_page_2" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Html\2021_11_10_07_03_26_DEGEWO_Degewo alles page 2.htm;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <value>Html\2021_11_10_07_03_26_DEGEWO_Degewo alles page 2.zip;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="_2021_11_10_07_03_31_DEGEWO_Degewo_alles_page_3" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Html\2021_11_10_07_03_31_DEGEWO_Degewo alles page 3.htm;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <value>Html\2021_11_10_07_03_31_DEGEWO_Degewo alles page 3.zip;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="_2021_11_10_07_08_42_DEGEWO_details_W1400_40274_0940_0404" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Html\2021_11_10_07_08_42_DEGEWO_details_W1400-40274-0940-0404.htm;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <value>Html\2021_11_10_07_08_42_DEGEWO_details_W1400-40274-0940-0404.zip;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="_2021_11_10_07_09_57_DEGEWO_details_W3110_02304_0197_0201" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Html\2021_11_10_07_09_57_DEGEWO_details_W3110-02304-0197-0201.htm;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <value>Html\2021_11_10_07_09_57_DEGEWO_details_W3110-02304-0197-0201.zip;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="_2021_11_10_11_13_56_DEGEWO_details_W1400_51813_0012_0304" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Html\2021_11_10_11_13_56_DEGEWO_details_W1400-51813-0012-0304.htm;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <value>Html\2021_11_10_11_13_56_DEGEWO_details_W1400-51813-0012-0304.zip;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="_2021_11_10_11_14_12_DEGEWO_details_W1150_00427_0207_0503" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Html\2021_11_10_11_14_12_DEGEWO_details_W1150-00427-0207-0503.htm;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <value>Html\2021_11_10_11_14_12_DEGEWO_details_W1150-00427-0207-0503.zip;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>
