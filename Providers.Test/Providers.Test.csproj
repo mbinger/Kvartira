@@ -95,15 +95,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Html\2021_11_10_07_03_22_DEGEWO_Degewo alles page 1.htm" />
-    <Content Include="Html\2021_11_10_07_03_26_DEGEWO_Degewo alles page 2.htm" />
-    <Content Include="Html\2021_11_10_07_03_31_DEGEWO_Degewo alles page 3.htm" />
-    <Content Include="Html\2021_11_10_07_08_42_DEGEWO_details_W1400-40274-0940-0404.htm" />
-    <Content Include="Html\2021_11_10_07_09_57_DEGEWO_details_W3110-02304-0197-0201.htm" />
-    <None Include="Html\2021_11_10_11_14_12_DEGEWO_details_W1150-00427-0207-0503.htm" />
-    <None Include="Html\2021_11_10_11_13_56_DEGEWO_details_W1400-51813-0012-0304.htm" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{7da43d33-81a6-42a0-a398-2f4aa3430602}</Project>
       <Name>Common</Name>
