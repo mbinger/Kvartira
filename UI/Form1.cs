@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using Providers;
 using Providers.Degewo;
 using Providers.Gewobag;
+using Providers.ImmobilienScout24;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -65,7 +66,8 @@ namespace UI
             providers = new IProvider[]
             {
                 new GewobagProvider(downloader, log),
-                new DegewoProvider(downloader, log)
+                new DegewoProvider(downloader, log),
+                //new ImmobilienScout24Provider(downloader, log)
             };
 
             director = new Director(appConfig, providers, log);

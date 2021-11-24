@@ -44,7 +44,7 @@ namespace Providers
             this.log = log;
         }
 
-        public Task<LoadIdsResult> LoadIndexAsync(Search search)
+        public virtual Task<LoadIdsResult> LoadIndexAsync(Search search)
         {
             return LoadIndexPrivateAsync(search.SearchUrl, search.DescriptionShort, 1);
         }
@@ -194,7 +194,7 @@ namespace Providers
         }
 
 
-        public async Task<WohnungCard> LoadDetailsAsync(string wohnungId, bool immediately)
+        public async Task<WohnungCard> LoadDetailsAsync(string wohnungId, bool immediately = false)
         {
             try
             {

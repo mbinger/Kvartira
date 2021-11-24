@@ -1,9 +1,7 @@
 ﻿using Common;
 using Data;
 using Newtonsoft.Json;
-using Providers;
-using Providers.Degewo;
-using Providers.Gewobag;
+using Providers.ImmobilienScout24;
 using System;
 using System.IO;
 using System.Linq;
@@ -36,37 +34,11 @@ namespace Main
             var log = new Log(appConfig);
 
             var downloader = new HttpDownloader(log, appConfig);
-            /*
-            var downloader = new DumpDownloader(appConfig, new[]
-            {
-                "2021_11_04_11_19_30_GEWOBAG_details_0100-02571-0103-0124.htm",
-            });
-            */
 
+            var provider = new ImmobilienScout24Provider(downloader, log);
 
-            var provider = new DegewoProvider(downloader, log);
-
-            var search = appConfig.SearchConfig.FirstOrDefault(p => p.ProviderName == provider.Name);
-            //var index = await provider.LoadIndexAsync(search);
-            var card = await provider.LoadDetailsAsync("W3110-02304-0197-0201");
-
-            //var director = new Director(appConfig, providers, log);
-
-            //var count = await director.LoadAsync();
-
-            //Console.WriteLine($"{count} entries loaded");
-
-            /*
-            var index = await gewobag.LoadIndexAsync(new Search
-            {
-                DescriptionLong = "",
-                DescriptionShort = "",
-                Importance = 0,
-                ProviderName = "GEWOBAG",
-                SearchUrl = "",
-                Active = true
-            });*/
-            //var details = await gewobag.LoadDetailsAsync("0100-02571-0103-0124");
+            var search = appConfig.SearchConfig.FirstOrDefault(p => p.DescriptionShort == "ImmoScout24 Treptow-Köpenick");
+            var index = await provider.LoadIndexAsync(search);
         }
     }
 }
