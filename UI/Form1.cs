@@ -20,7 +20,7 @@ namespace UI
         private AppConfig appConfig;
         private Log log;
         private IProvider[] providers;
-        private Director director;
+        public Director director;
         private Random rnd = new Random();
         private int queriesCount = 0;
         private DateTime NextQuery;
@@ -71,7 +71,7 @@ namespace UI
             director = new Director(appConfig, providers, log);
 
             //refresh
-            toolStripButtonRefresh_Click(sender, e);
+            RefreshGrid();
 
             EnableTimer();
 
@@ -89,11 +89,13 @@ namespace UI
 
         private void toolStripButtonRefresh_Click(object sender, EventArgs e)
         {
-            BindItemsToGrid(null);
+            RefreshGrid(null);
         }
 
-        private void BindItemsToGrid(List<int> requiredIds)
+        public void RefreshGrid(List<int> requiredIds = null)
         {
+            var selectedIds = GetSelectedIds();
+
             dataGridView1.Rows.Clear();
 
             List<WohnungHeaderEntity> headers;
@@ -172,6 +174,19 @@ namespace UI
                     formatBool(detail?.Balkon),
                     header.Gesehen?.ToString("dd.MM.yyyy"),
                     "открыть");
+            }
+
+            if (selectedIds.Any())
+            {
+                foreach (DataGridViewRow row in dataGridView1.Rows)
+                {
+                    row.Selected = false;
+                    var id = GetId(row);
+                    if (selectedIds.Contains(id))
+                    {
+                        row.Selected = true;
+                    }
+                }
             }
 
             dataGridView1.Refresh();
@@ -263,7 +278,7 @@ namespace UI
             var oldIds = GetIdsFromCurrentView();
 
             //refresh view
-            toolStripButtonRefresh_Click(sender, e);
+            RefreshGrid();
 
             var newIds = GetIdsFromCurrentView();
 
@@ -303,11 +318,17 @@ namespace UI
 
             foreach (DataGridViewRow row in dataGridView1.Rows)
             {
-                var cellValue = row.Cells[IdColumn.Index].Value.ToString();
-                var id = int.Parse(cellValue);
+                var id = GetId(row);
                 result.Add(id);
             }
             return result;
+        }
+
+        private int GetId(DataGridViewRow row)
+        {
+            var cellValue = row.Cells[IdColumn.Index].Value.ToString();
+            var id = int.Parse(cellValue);
+            return id;
         }
 
         private List<int> GetSelectedIds()
@@ -318,8 +339,7 @@ namespace UI
             {
                 if (row.Selected)
                 {
-                    var cellValue = row.Cells[IdColumn.Index].Value.ToString();
-                    var id = int.Parse(cellValue);
+                    var id = GetId(row);
                     result.Add(id);
                 }
             }
@@ -345,7 +365,7 @@ namespace UI
                 db.SaveChanges();
             }
 
-            BindItemsToGrid(ids);
+            RefreshGrid(ids);
         }
 
         private void ShowProvidersRating()
@@ -530,6 +550,22 @@ namespace UI
 
         private void dataGridView1_CellMouseUp(object sender, DataGridViewCellMouseEventArgs e)
         {
+            if (e.Button == MouseButtons.Left && e.Clicks == 2)
+            {
+                //open details
+
+                //select current row if nothing selected
+                foreach (DataGridViewRow row2 in dataGridView1.Rows)
+                {
+                    row2.Selected = false;
+                }
+
+                var row = dataGridView1.Rows[e.RowIndex];
+                row.Selected = true;
+                var id = GetId(row);
+                var dlg = new Details(id, this);
+                dlg.ShowDialog(this);
+            }
             if (e.Button == MouseButtons.Right)
             {
                 //context menu
@@ -549,21 +585,12 @@ namespace UI
                 //open link
                 try
                 {
-                    var id = int.Parse(dataGridView1.Rows[e.RowIndex].Cells[IdColumn.Index].Value.ToString());
-                    var provider = dataGridView1.Rows[e.RowIndex].Cells[VermieterColumn.Index].Value.ToString();
-                    var wohnungId = dataGridView1.Rows[e.RowIndex].Cells[WohnungColumn.Index].Value.ToString();
+                    var row = dataGridView1.Rows[e.RowIndex];
+                    var id = GetId(row);
+                    var provider = row.Cells[VermieterColumn.Index].Value.ToString();
+                    var wohnungId = row.Cells[WohnungColumn.Index].Value.ToString();
 
-                    var url = director.GetOpenDetailsUrl(provider, wohnungId)?.TrimEnd();
-
-                    if (string.IsNullOrEmpty(url))
-                    {
-                        MessageBox.Show("Невозможно открыть");
-                    }
-
-                    var psi = new System.Diagnostics.ProcessStartInfo();
-                    psi.UseShellExecute = true;
-                    psi.FileName = url;
-                    System.Diagnostics.Process.Start(psi);
+                    OpenWohungInBrowser(provider, wohnungId);
 
                     using (var db = new WohnungDb())
                     {
@@ -583,6 +610,26 @@ namespace UI
                     MessageBox.Show(ex.ToString());
                 }
             }
+        }
+
+        public void OpenWohungInBrowser(string provider, string wohnungId)
+        {
+            var url = director.GetOpenDetailsUrl(provider, wohnungId)?.TrimEnd();
+
+            if (string.IsNullOrEmpty(url))
+            {
+                MessageBox.Show("Ошибка получения URL");
+            }
+
+            OpenInBrowser(url);
+        }
+
+        public static void OpenInBrowser(string url)
+        {
+            var psi = new ProcessStartInfo();
+            psi.UseShellExecute = true;
+            psi.FileName = url;
+            Process.Start(psi);
         }
 
         private void copyIdToolStripMenuItem_Click(object sender, EventArgs e)

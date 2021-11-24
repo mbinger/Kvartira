@@ -21,6 +21,24 @@ namespace UI
             this.log = log;
         }
 
+        private void BindCardToEntity(WohnungCard card, WohnungDetailsEntity entity)
+        {
+            entity.Ueberschrift = card.Header;
+            entity.Anschrift = card.Anschrift;
+            entity.Balkon = card.Balkon;
+            entity.Beschreibung = card.Beschreibung;
+            entity.Bezirk = card.Bezirk;
+            entity.Etage = card.Etage;
+            entity.Etagen = card.Etagen;
+            entity.Flaeche = card.Flaeche;
+            entity.FreiAb = card.FreiAb;
+            entity.Keller = card.Keller;
+            entity.MieteKalt = card.MieteKalt;
+            entity.MieteWarm = card.MieteWarm;
+            entity.Wbs = card.Wbs;
+            entity.Zimmer = card.Zimmer;
+        }
+
         private IProvider GetProviderByName(string name)
         {
             var provider = providers.FirstOrDefault(p => string.Compare(p.Name, name, true) == 0);
@@ -123,6 +141,60 @@ namespace UI
             return result;
         }
 
+        public async Task<bool> TryReloadDetails(string providerName, string wohnungId)
+        {
+            var provider = GetProviderByName(providerName);
+            if (provider == null)
+            {
+                log.Write("TryReloadDetails: Unable to find provider");
+                return false;
+            }
+
+            using (var db = new WohnungDb())
+            {
+                var header = db.WohnungHeaders.FirstOrDefault(p => p.Provider == providerName && p.WohnungId == wohnungId);
+                if (header == null)
+                {
+                    log.Write($"TryReloadDetails: WohnungHeader '{providerName}' '{wohnungId}' not found");
+                    return false;
+                }
+            }
+
+            var card = await provider.LoadDetailsAsync(wohnungId, true);
+            if (card == null)
+            {
+                log.Write("TryReloadDetails: LoadDetailsAsync returns null");
+                return false;
+            }
+
+            using (var db = new WohnungDb())
+            {
+                var header = db.WohnungHeaders.FirstOrDefault(p => p.Provider == providerName && p.WohnungId == wohnungId);
+                if (header == null)
+                {
+                    log.Write($"TryReloadDetails: WohnungHeader '{providerName}' '{wohnungId}' not found after load");
+                    return false;
+                }
+                header.LoadDetailsTries++;
+
+                var details = db.WohnungDetails.SingleOrDefault(p => p.WohnungHeaderId == header.Id);
+                if (details == null)
+                {
+                    details = new WohnungDetailsEntity
+                    {
+                        WohnungHeaderId = header.Id
+                    };
+                    db.WohnungDetails.Add(details);
+                }
+
+                BindCardToEntity(card, details);
+
+                db.SaveChanges();
+            }
+
+            return true;
+        }
+
         private class ProviderWohnungId
         {
             public int HeaderId { get; set; }
@@ -154,7 +226,7 @@ namespace UI
                     continue;
                 }
 
-                var card = await provider.LoadDetailsAsync(id.WohnungId);
+                var card = await provider.LoadDetailsAsync(id.WohnungId, false);
 
                 var now = DateTime.Now;
 
@@ -165,21 +237,8 @@ namespace UI
                         var detailsEntity = new WohnungDetailsEntity
                         {
                             WohnungHeaderId = id.HeaderId,
-                            Ueberschrift = card.Header,
-                            Anschrift = card.Anschrift,
-                            Balkon = card.Balkon,
-                            Beschreibung = card.Beschreibung,
-                            Bezirk = card.Bezirk,
-                            Etage = card.Etage,
-                            Etagen = card.Etagen,
-                            Flaeche = card.Flaeche,
-                            FreiAb = card.FreiAb,
-                            Keller = card.Keller,
-                            MieteKalt = card.MieteKalt,
-                            MieteWarm = card.MieteWarm,
-                            Wbs = card.Wbs,
-                            Zimmer = card.Zimmer
                         };
+                        BindCardToEntity(card, detailsEntity);
                         db.WohnungDetails.Add(detailsEntity);
 
                         await db.SaveChangesAsync();

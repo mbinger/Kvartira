@@ -53,7 +53,7 @@ namespace Providers
     {
         string Name { get; }
         Task<LoadIdsResult> LoadIndexAsync(Search config);
-        Task<WohnungCard> LoadDetailsAsync(string wohnungId);
+        Task<WohnungCard> LoadDetailsAsync(string wohnungId, bool immediately);
         string GetOpenDetailsUrl(string wohnungId);
     }
 }

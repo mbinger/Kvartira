@@ -194,11 +194,14 @@ namespace Providers
         }
 
 
-        public async Task<WohnungCard> LoadDetailsAsync(string wohnungId)
+        public async Task<WohnungCard> LoadDetailsAsync(string wohnungId, bool immediately)
         {
             try
             {
-                await downloader.Delay();
+                if (!immediately)
+                {
+                    await downloader.Delay();
+                }
                 var url = GetOpenDetailsUrl(wohnungId);
                 var response = await downloader.GetAsync(url, Name + "_details_" + wohnungId, true);
                 if (!string.IsNullOrEmpty(response.Exception))
