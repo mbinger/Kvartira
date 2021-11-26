@@ -1,0 +1,19 @@
+{
+
+  "manifest_version": 2,
+  "name": "BrowserDownloader",
+  "version": "1.0",
+
+  "description": "Downloads content with browser",
+
+  "icons": {
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["downloader.js"]
+    }
+  ]
+
+}

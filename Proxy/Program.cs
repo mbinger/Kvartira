@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Proxy
@@ -14,6 +16,7 @@ namespace Proxy
 
         static void Main(string[] args)
         {
+            int i = 0;
             listener.Start();
             new Task(() => {
                 // Accept clients.
@@ -21,11 +24,28 @@ namespace Proxy
                 {
                     var client = listener.AcceptTcpClient();
                     new Task(() => {
-                        // Handle this client.
-                        var clientStream = client.GetStream();
-                        TcpClient server = new TcpClient("18.66.2.16", 443);
-                        var serverStream = server.GetStream();
-                        new Task(() => {
+                    // Handle this client.
+                    var clientStream = client.GetStream();
+                    TcpClient server = new TcpClient("webproxy-se.corp.vattenfall.com", 8080);
+                    var serverStream = server.GetStream();
+                    i++;
+                    var fileName = "";
+                    if (i < 10)
+                    {
+                            fileName = "00" + i.ToString();
+                    }
+                    else if (i < 100)
+                    {
+                            fileName = "0" + i.ToString();
+                    }
+                    else
+                    {
+                     fileName = i.ToString();
+                    }
+
+                        var file = File.OpenWrite($"c:\\a\\{fileName}.txt");
+                        new Task(() => 
+                        {
                             byte[] message = new byte[BUFFER_SIZE];
                             int clientBytes;
                             while (true)
@@ -45,10 +65,14 @@ namespace Proxy
                                     break;
                                 }
                                 serverStream.Write(message, 0, clientBytes);
-                            }
+                                file.Write(message, 0, clientBytes);
+                             }
                             client.Close();
                         }).Start();
-                        new Task(() => {
+                        new Task(() => 
+                        {
+                            var bytes = Encoding.UTF8.GetBytes("<<<<<<<<<<<<<<<<<<<<<<<<<<\n");
+                            file.Write(bytes, 0, bytes.Length);
                             byte[] message = new byte[BUFFER_SIZE];
                             int serverBytes;
                             while (true)
@@ -57,6 +81,7 @@ namespace Proxy
                                 {
                                     serverBytes = serverStream.Read(message, 0, BUFFER_SIZE);
                                     clientStream.Write(message, 0, serverBytes);
+                                    file.Write(message, 0, serverBytes);
                                 }
                                 catch
                                 {
@@ -69,6 +94,7 @@ namespace Proxy
                                     break;
                                 }
                             }
+                            file.Close();
                         }).Start();
                     }).Start();
                 }
