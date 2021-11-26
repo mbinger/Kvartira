@@ -22,7 +22,7 @@ namespace Providers.Test
             };
             var log = new Mock<Log>(MockBehavior.Loose);
             
-            var downloader = new HttpDownloader(log.Object, appConfig);
+            var downloader = new BrowserDownloader();
             var response = await downloader.GetAsync("https://www.immobilienscout24.de/Suche/de/berlin/berlin/treptow-koepenick/wohnung-mit-balkon-mieten?haspromotion=false&numberofrooms=3.0-&enteredFrom=result_list", "ImmoScout24 Treptow-Köpenick", true);
 
 

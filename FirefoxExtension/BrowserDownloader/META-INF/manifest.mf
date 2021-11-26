@@ -1,0 +1,68 @@
+Manifest-Version: 1.0
+
+Name: background.js
+Digest-Algorithms: MD5 SHA1 SHA256
+MD5-Digest: e6OQI5GXY99pAm6IzeejMw==
+SHA1-Digest: wQsjlEft+wkDr658DxfaRMa+hbE=
+SHA256-Digest: lh1tzzHa1Lg8FLTdcGkJdlRcyXk+WCNxcxYOv1E7Wus=
+
+Name: manifest.json
+Digest-Algorithms: MD5 SHA1 SHA256
+MD5-Digest: GWRSeYiRva/S+VS9vfhbFw==
+SHA1-Digest: 6CY2KDQfY8NscW1hUI4e3LMxyQc=
+SHA256-Digest: GyBRRrRRLromHAU4/GW/R2vCa7yBCX9b99PCllpDV/I=
+
+Name: options.html
+Digest-Algorithms: MD5 SHA1 SHA256
+MD5-Digest: 5mrV/UD0PRg6VM5dplOoiA==
+SHA1-Digest: b3SqaOF3MVXelnx0no3xtpFbejw=
+SHA256-Digest: vzJujpM/Sc8/z3yIHd9Bx0uAsSxZ9S9Rxr9b6d0g2rY=
+
+Name: options.js
+Digest-Algorithms: MD5 SHA1 SHA256
+MD5-Digest: akhnkKFGur5os7Q2Wfyqnw==
+SHA1-Digest: 566KPe+s1OLDVS+VB8GQPuW4e4U=
+SHA256-Digest: 3y00dOX1w7zGzkz+xF9QshXdlTSuqeQBM9IqoHXUiPc=
+
+Name: README.md
+Digest-Algorithms: MD5 SHA1 SHA256
+MD5-Digest: VJh7IlLyhEaW/yN9pcYVjQ==
+SHA1-Digest: vYtwhoQgMmghUoEQSBFAtDHNfCs=
+SHA256-Digest: Ul4CrC/cTeWIIsscEujFg9lxRi9X+yU5pYG0fGxrZFU=
+
+Name: style.css
+Digest-Algorithms: MD5 SHA1 SHA256
+MD5-Digest: rUa6BFFQz9V9gobBmUdq5w==
+SHA1-Digest: hElD38IGNPTZwPEn8ykSlOsmGAE=
+SHA256-Digest: X3RqXaK0o4YPUKWtY6fJwAJvm9PUdtyidFxKaU3UdgQ=
+
+Name: media/button-48-off.png
+Digest-Algorithms: MD5 SHA1 SHA256
+MD5-Digest: 5FxoNKQs022qGX11PEmm7Q==
+SHA1-Digest: FWDYsx+G+yS355Clik6pcWt+H24=
+SHA256-Digest: rUrFOAttToSn4o4j2oNBtkn1FQuguXVwmdFMmt+PpbU=
+
+Name: media/button-48-on-filter.png
+Digest-Algorithms: MD5 SHA1 SHA256
+MD5-Digest: uk4ubmpPlymO2zClJfmW9w==
+SHA1-Digest: sDCZKjGc7CJSbd/jOEYNieUZU9k=
+SHA256-Digest: 55Bea8yfvHTesrWAroWjw52lBPAru7qZ3vpruA0aSkU=
+
+Name: media/button-48-on.png
+Digest-Algorithms: MD5 SHA1 SHA256
+MD5-Digest: sp0aFkSGsesqJgS9q9Pn/w==
+SHA1-Digest: Bo4xsO6wASLawdGR4nWVYfsppPU=
+SHA256-Digest: 444xCLq2oGq3/uzSnWjjzvhUMAfK47JveSDlqfvF0t8=
+
+Name: media/button-48.png
+Digest-Algorithms: MD5 SHA1 SHA256
+MD5-Digest: lXnRs7ejh3rwlkpH3y8dDQ==
+SHA1-Digest: fz8I7Y+hNwYtlAmIGpNOPnx0T40=
+SHA256-Digest: uQxxls72KCDYnlY73W7urd2apEI0uQcH542CYJl/J9o=
+
+Name: license.txt
+Digest-Algorithms: MD5 SHA1 SHA256
+MD5-Digest: dCdqy6EMFoi5X/r5Hudg9A==
+SHA1-Digest: b+OHHavTczBItfRNsN6b7hMhX+Y=
+SHA256-Digest: bhszUakYVTguvnhtJIu+NJYJ2h8BaYt0AkriDJOx0Ok=
+

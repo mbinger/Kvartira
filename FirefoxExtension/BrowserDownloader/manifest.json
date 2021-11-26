@@ -1,19 +1,44 @@
 {
+    "manifest_version" : 2
 
-  "manifest_version": 2,
-  "name": "BrowserDownloader",
-  "version": "1.0",
+    ,"name"        : "CORS Everywhere"
+    ,"version"     : "18.11.13.2043"
+    ,"author"      : "spenibus"
+    ,"description" : "Bypass CORS restrictions by altering http responses."
 
-  "description": "Downloads content with browser",
+    ,"permissions" : [
+         "webRequest"
+        ,"webRequestBlocking"
+        ,"storage"
+        ,"<all_urls>"
+    ]
 
-  "icons": {
-  },
+    ,"background" : {
+        "scripts" : ["background.js"]
+    }
 
-  "content_scripts": [
+    ,"browser_action" : {
+         "default_title" : "CORS Everywhere"
+        ,"default_icon"  : {
+            "48" : "media/button-48.png"
+        }
+    }
+
+    ,"options_ui" : {
+         "page"          : "options.html"
+        ,"browser_style" : true
+    }
+
+    ,"applications": {
+        "gecko": {
+            "id": "cors-everywhere@spenibus"
+        }
+    }
+  
+    ,"content_scripts": [
     {
       "matches": ["<all_urls>"],
       "js": ["downloader.js"]
     }
   ]
-
 }
