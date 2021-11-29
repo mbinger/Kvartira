@@ -47,8 +47,13 @@ namespace Common
             return Task.Delay(delay);
         }
 
-        public async Task<Response> GetAsync(string url, string description, bool deflate)
+        public async Task<Response> GetAsync(string url, bool fromcache, string description, bool deflate)
         {
+            if (fromcache)
+            {
+                throw new Exception("Cache not supported");
+            }
+
             var result = new Response
             {
                 Url = url

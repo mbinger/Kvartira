@@ -135,7 +135,7 @@ namespace Providers
             {
                 await downloader.Delay();
 
-                var content = await downloader.GetAsync(url, Name + "_" + description + $" page {page}", true);
+                var content = await downloader.GetAsync(url, false, Name + "_" + description + $" page {page}", true);
 
                 log.Write($"{Name} {description} GET page {page} {url} HTTP {content.HttpStatusCode} {content.Exception}");
 
@@ -203,7 +203,7 @@ namespace Providers
                     await downloader.Delay();
                 }
                 var url = GetOpenDetailsUrl(wohnungId);
-                var response = await downloader.GetAsync(url, Name + "_details_" + wohnungId, true);
+                var response = await downloader.GetAsync(url, false, Name + "_details_" + wohnungId, true);
                 if (!string.IsNullOrEmpty(response.Exception))
                 {
                     return null;

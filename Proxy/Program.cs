@@ -4,6 +4,7 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Proxy
@@ -16,6 +17,35 @@ namespace Proxy
 
         static void Main(string[] args)
         {
+            var sem = new SemaphoreSlim(0);
+
+            new Task(async () =>
+            {
+                while (true)
+                {
+                    Console.WriteLine("Waiting...!");
+                    await sem.WaitAsync();
+                    Console.WriteLine("Semaphore!");
+                }
+            }).Start();
+
+            new Task(async () =>
+            {
+                while (true)
+                {
+                    await Task.Delay(5000);
+                    sem.Release();
+                }
+            }).Start();
+
+
+
+            Console.ReadLine();
+
+
+
+
+
             int i = 0;
             listener.Start();
             new Task(() => {

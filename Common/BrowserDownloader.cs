@@ -1,5 +1,7 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Caching.Memory;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -12,8 +14,13 @@ namespace Common
 {
     public class BrowserDownloader : IDownloader, IDisposable
     {
+        private static ConcurrentBag<string> requests = new ConcurrentBag<string>();
+        private static MemoryCache responses = new MemoryCache(new MemoryCacheOptions { ExpirationScanFrequency = TimeSpan.FromMinutes(5) });
+
+        private static HttpServer requestListener = null;
         private static TcpListener responseListener = null;
         private static object lockObj = new object();
+        private static SemaphoreSlim semaphore = new SemaphoreSlim(0);
 
         public BrowserDownloader()
         {
@@ -25,32 +32,121 @@ namespace Common
             return Task.CompletedTask;
         }
 
-        public async Task<Response> GetAsync(string url, string description, bool deflate)
+        private TimeSpan GetTimeOut = TimeSpan.FromMinutes(5);
+
+        public async Task<Response> GetAsync(string url, bool fromCache, string description, bool deflate)
         {
+            if (fromCache)
+            {
+                if (responses.TryGetValue(url, out var content2))
+                {
+                    responses.Remove(url);
+
+                    return new Response
+                    {
+                        HttpStatusCode = 200,
+                        Content = (string)content2,
+                        Url = url
+                    };
+                }
+                else
+                {
+                    return null;
+                }
+            }
+
+            requests.Add(url);
+
             Start();
 
-            await Task.Delay(int.MaxValue);
-            return new Response();
+            var ct = new CancellationTokenSource();
+            var timeoutTask = Task.Delay(GetTimeOut, ct.Token);
+
+            while (true)
+            {
+                if (responses.TryGetValue(url, out var content2))
+                {
+                    responses.Remove(url);
+                    ct.Cancel();
+
+                    return new Response
+                    {
+                        HttpStatusCode = 200,
+                        Content = (string)content2,
+                        Url = url
+                    };
+                }
+
+                if (timeoutTask.IsCompleted)
+                {
+                    return new Response
+                    {
+                        Exception = "Timeout"
+                    };
+                }
+
+                await semaphore.WaitAsync(TimeSpan.FromSeconds(1));
+            }
         }
 
         private void Start()
         {
             lock (lockObj)
             {
+                if (requestListener == null)
+                {
+                    StartRequestListener();
+                }
                 if (responseListener == null)
                 {
-                    StartListener();
+                    StartResponseListener();
                 }
             }
         }
 
-        private void StartListener()
+        const int BUFFER_SIZE = 4096;
+
+        private void StartRequestListener()
         {
-            var i = 0;
-            const int BUFFER_SIZE = 4096;
-            responseListener = new TcpListener(IPAddress.Any, 82);
+            Task.Run(() =>
+            {
+                var route = new Route
+                {
+                    Method = "GET",
+                    Name = "index",
+                    UrlRegex = "",
+                    Callable = (HttpRequest req) =>
+                    {
+                        var requestExits = requests.TryTake(out var url);
+
+                        if (requestExits)
+                        {
+
+                        }
+
+                        return new HttpResponse
+                        {
+                            StatusCode = "200",
+                            ContentAsUTF8 = requestExits
+                                ? url
+                                : "",
+                            Headers = new Dictionary<string, string>
+                            {
+                            { "Content-Type", "text/plain"}
+                            }
+                        };
+                    }
+                };
+                requestListener = new HttpServer(82, new List<Route> { route });
+                requestListener.Listen();
+            });
+        }
+
+        private void StartResponseListener()
+        {
+            responseListener = new TcpListener(IPAddress.Any, 83);
             responseListener.Start();
-            new Task(async () => 
+            new Task(async () =>
             {
                 try
                 {
@@ -96,15 +192,8 @@ namespace Common
 
                                     if (pagePayload != null)
                                     {
-                                        var content = new StringBuilder();
-                                        content.AppendLine($"<!--{pagePayload.Url}-->");
-                                        content.AppendLine($"<!--200-->");
-                                        content.AppendLine($"<!---->");
-                                        content.AppendLine(pagePayload.Document);
-
-                                        Interlocked.Increment(ref i);
-                                        var path = $@"c:\\a\\{i}.txt";
-                                        File.WriteAllText(path, content.ToString());
+                                        responses.Set(pagePayload.Url, pagePayload.Document, TimeSpan.FromMinutes(5));
+                                        semaphore.Release();
                                     }
                                 }
                             }
@@ -121,21 +210,11 @@ namespace Common
             }).Start();
         }
 
-        private void StartZombieBrowser()
-        {
-
-        }
-
-        private async Task ListenResponseAsync()
-        {
-
-        }
-
         public void Dispose()
         {
-            responseListener?.Stop();            responseListener = null;        }
+        }
 
-        private InterceptedPagePaload Parse(string postContent)
+        private InterceptedPagePayload Parse(string postContent)
         {
             if (string.IsNullOrEmpty(postContent))
             {
@@ -153,7 +232,7 @@ namespace Common
                 {
                     try
                     {
-                        var payload = JsonConvert.DeserializeObject<InterceptedPagePaload>(str);
+                        var payload = JsonConvert.DeserializeObject<InterceptedPagePayload>(str);
                         return payload;
                     }
                     catch (Exception ex)
@@ -165,14 +244,14 @@ namespace Common
 
             return null;
         }
-    }
 
-    public class InterceptedPagePaload
-    {
-        [JsonProperty("url")]
-        public string Url { get; set; }
+        public class InterceptedPagePayload
+        {
+            [JsonProperty("url")]
+            public string Url { get; set; }
 
-        [JsonProperty("document")]
-        public string Document { get; set; }
+            [JsonProperty("document")]
+            public string Document { get; set; }
+        }
     }
 }

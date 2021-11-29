@@ -19,7 +19,7 @@ namespace Providers.ImmobilienScout24
 
         public override async Task<LoadIdsResult> LoadIndexAsync(Search search)
         {
-            await downloader.GetAsync("https://www.immobilienscout24.de/", "immobilien scout start", true);
+            await downloader.GetAsync("https://www.immobilienscout24.de/", false,  "immobilien scout start", true);
             return await base.LoadIndexAsync(search);
         }
 

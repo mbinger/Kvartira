@@ -80,7 +80,7 @@ namespace Common
             }
         }
 
-        public async Task<Response> GetAsync(string url, string description, bool deflate)
+        public async Task<Response> GetAsync(string url, bool fromcache, string description, bool deflate)
         {
             if (index >= dumpFiles.Length)
             {

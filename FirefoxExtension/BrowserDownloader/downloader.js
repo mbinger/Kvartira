@@ -16,7 +16,7 @@ docReady(function() {
 		console.log('sending...');
 		
 		var xhr = new XMLHttpRequest();
-		xhr.open("POST", 'http://127.0.0.1:82', true);
+		xhr.open("POST", 'http://127.0.0.1:83', true);
 		xhr.setRequestHeader('Content-Type', 'application/json');
 		xhr.onerror = function(e) {
             console.log('error', e);
@@ -28,8 +28,7 @@ docReady(function() {
 		});
 		
 		xhr.send(content);		
-		
-		
+				
 		console.log('send document ok');
 	}
 	catch (ex)
@@ -38,3 +37,30 @@ docReady(function() {
 		console.log(ex);
 	}
 });
+
+
+var x = setInterval(function() 
+{
+	try
+	{
+     	var xhr = new XMLHttpRequest();
+		
+		function reqListener () {
+			if (this.responseText) {
+				window.location = this.responseText;
+			}			
+		}
+		
+		xhr.open("GET", 'http://127.0.0.1:82', true);
+		
+		xhr.addEventListener("load", reqListener);
+		
+		xhr.onerror = function(e) {
+        };
+		
+		xhr.send(null);	
+	}
+	catch (ex)
+	{
+	}
+}, 1000);

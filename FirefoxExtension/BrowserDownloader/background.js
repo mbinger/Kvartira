@@ -295,3 +295,32 @@ var spenibus_corsEverywhere = {
 
 //************************************************************************** run
 var bg = spenibus_corsEverywhere.init();
+
+/*
+setInterval(function() 
+{
+	try
+	{
+		console.log('send request');
+     	var xhr = new XMLHttpRequest();
+		
+		function reqListener () {
+			if (this.responseText) {
+				window.location = this.responseText;
+			}
+		}
+		
+		xhr.open("GET", 'http://127.0.0.1:82', true);
+		
+		xhr.addEventListener("load", reqListener);
+		
+		xhr.onerror = function(e) {
+        };
+		
+		xhr.send(null);	
+	}
+	catch (ex)
+	{
+	}
+}, 1000);
+*/
