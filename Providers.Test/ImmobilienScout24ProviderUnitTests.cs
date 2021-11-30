@@ -22,8 +22,8 @@ namespace Providers.Test
             };
             var log = new Mock<Log>(MockBehavior.Loose);
             
-            var downloader = new BrowserDownloader();
-            var response = await downloader.GetAsync("https://www.immobilienscout24.de/Suche/de/berlin/berlin/treptow-koepenick/wohnung-mit-balkon-mieten?haspromotion=false&numberofrooms=3.0-&enteredFrom=result_list", false, "ImmoScout24 Treptow-Köpenick", true);
+            //var downloader = new BrowserDownloader();
+            //var response = await downloader.GetAsync("https://www.immobilienscout24.de/Suche/de/berlin/berlin/treptow-koepenick/wohnung-mit-balkon-mieten?haspromotion=false&numberofrooms=3.0-&enteredFrom=result_list", false, "ImmoScout24 Treptow-Köpenick", true);
 
 
 //            var provider = new ImmobilienScout24Provider(downloader, log.Object);

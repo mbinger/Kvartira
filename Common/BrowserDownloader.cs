@@ -14,6 +14,10 @@ namespace Common
 {
     public class BrowserDownloader : IDownloader, IDisposable
     {
+        private readonly ILog log;
+        private readonly AppConfig appConfig;
+        private Random random;
+
         private static ConcurrentBag<string> requests = new ConcurrentBag<string>();
         private static MemoryCache responses = new MemoryCache(new MemoryCacheOptions { ExpirationScanFrequency = TimeSpan.FromMinutes(5) });
 
@@ -21,9 +25,16 @@ namespace Common
         private static TcpListener responseListener = null;
         private static object lockObj = new object();
         private static SemaphoreSlim semaphore = new SemaphoreSlim(0);
+        private static Task requestListenerTask;
+        private static Task responseListenerTask;
+        private static CancellationTokenSource requestListenerCancellation;
+        private static CancellationTokenSource responseListenerCancellation;
 
-        public BrowserDownloader()
+        public BrowserDownloader(ILog log, AppConfig appConfig)
         {
+            this.log = log;
+            this.appConfig = appConfig;
+            random = new Random();
         }
 
         public Task Delay()
@@ -35,6 +46,21 @@ namespace Common
         private TimeSpan GetTimeOut = TimeSpan.FromMinutes(5);
 
         public async Task<Response> GetAsync(string url, bool fromCache, string description, bool deflate)
+        {
+            var result = await GetAsyncIntern(url, fromCache, description, deflate);
+
+            DumpDownloader.WriteDump(appConfig, log, result, description);
+
+            if (deflate && !string.IsNullOrEmpty(result.Content))
+            {
+                result.Content = Scanner.DeflateHtml(result.Content);
+                DumpDownloader.WriteDump(appConfig, log, result, description + "_deflated");
+            }
+
+            return result;
+        }
+
+        private async Task<Response> GetAsyncIntern(string url, bool fromCache, string description, bool deflate)
         {
             if (fromCache)
             {
@@ -95,20 +121,22 @@ namespace Common
             {
                 if (requestListener == null)
                 {
-                    StartRequestListener();
+                    requestListenerCancellation = new CancellationTokenSource();
+                    requestListenerTask = StartRequestListener();
                 }
                 if (responseListener == null)
                 {
-                    StartResponseListener();
+                    responseListenerCancellation = new CancellationTokenSource();
+                    responseListenerTask = StartResponseListener();
                 }
             }
         }
 
         const int BUFFER_SIZE = 4096;
 
-        private void StartRequestListener()
+        private Task StartRequestListener()
         {
-            Task.Run(() =>
+            return Task.Run(() =>
             {
                 var route = new Route
                 {
@@ -118,11 +146,6 @@ namespace Common
                     Callable = (HttpRequest req) =>
                     {
                         var requestExits = requests.TryTake(out var url);
-
-                        if (requestExits)
-                        {
-
-                        }
 
                         return new HttpResponse
                         {
@@ -142,19 +165,19 @@ namespace Common
             });
         }
 
-        private void StartResponseListener()
+        private Task StartResponseListener()
         {
             responseListener = new TcpListener(IPAddress.Any, 83);
             responseListener.Start();
-            new Task(async () =>
+            return Task.Run(async () =>
             {
                 try
                 {
                     // Accept clients.
-                    while (true)
+                    while (!responseListenerCancellation.Token.IsCancellationRequested)
                     {
                         var client = await responseListener.AcceptTcpClientAsync();
-                        new Task(() =>
+                        var _ = Task.Run(() =>
                         {
                             try
                             {
@@ -199,19 +222,32 @@ namespace Common
                             }
                             catch (Exception ex)
                             {
+                                log.Write("Browser download: StartListener\n" + ex.ToString());
                             }
-                        }).Start();
+                        });
                     }
                 }
                 catch (Exception ex)
                 {
-
+                    log.Write("Browser download: StartListener\n" + ex.ToString());
                 }
-            }).Start();
+            });
         }
 
         public void Dispose()
         {
+            if (responseListener != null)
+            {
+                responseListenerCancellation.Cancel();
+                responseListener.Stop();
+                responseListener = null;
+            }
+            if (requestListener != null)
+            {
+                requestListenerCancellation.Cancel();
+                requestListener.Stop();
+                requestListener = null;
+            }
         }
 
         private InterceptedPagePayload Parse(string postContent)

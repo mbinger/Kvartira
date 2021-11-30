@@ -7,7 +7,7 @@ namespace Providers.ImmobilienScout24
 {
     public class ImmobilienScout24Provider : ProviderBase
     {
-        public ImmobilienScout24Provider(IDownloader downloader, ILog log) : base(downloader, log)
+        public ImmobilienScout24Provider(BrowserDownloader downloader, ILog log) : base(downloader, log)
         {
         }
 

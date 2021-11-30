@@ -7,6 +7,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Common
 {
@@ -33,20 +34,29 @@ namespace Common
             }
         }
 
+        private Task listenTask;
         public void Listen()
         {
-            this.Listener = new TcpListener(IPAddress.Any, this.Port);
-            this.Listener.Start();
-            while (this.IsActive)
+            Listener = new TcpListener(IPAddress.Any, Port);
+            Listener.Start();
+            listenTask = Task.Run(async () =>
             {
-                TcpClient s = this.Listener.AcceptTcpClient();
-                Thread thread = new Thread(() =>
+                while (IsActive)
                 {
-                    this.Processor.HandleClient(s);
-                });
-                thread.Start();
-                Thread.Sleep(1);
-            }
+                    var s = await Listener.AcceptTcpClientAsync();
+                    var _ = Task.Run(() =>
+                    {
+                        Processor.HandleClient(s);
+                    });
+                    await Task.Delay(1);
+                }
+            });
+        }
+
+        public void Stop()
+        {
+            IsActive = false;
+            Listener.Stop();
         }
 
         #endregion
