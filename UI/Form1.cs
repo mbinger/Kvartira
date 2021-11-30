@@ -63,11 +63,13 @@ namespace UI
             log = new Log(appConfig);
 
             var downloader = new HttpDownloader(log, appConfig);
+            var browserDownloader = new BrowserDownloader(log, appConfig);
+
             providers = new IProvider[]
             {
                 new GewobagProvider(downloader, log),
                 new DegewoProvider(downloader, log),
-                //new ImmobilienScout24Provider(downloader, log)
+                new ImmobilienScout24Provider(browserDownloader, log)
             };
 
             director = new Director(appConfig, providers, log);
@@ -209,6 +211,7 @@ namespace UI
             nextQueryValue.Visible = true;
         }
 
+        private int poolintTimerCommand = 0;
         private void poolingfTimer_Tick(object sender, EventArgs e)
         {
             if (backgroundWorker1.IsBusy)
@@ -262,7 +265,19 @@ namespace UI
             //start download
             try
             {
-                director.LoadAsync().GetAwaiter().GetResult();
+                switch (poolintTimerCommand)
+                {
+                    case 0:
+                        director.LoadAsync().GetAwaiter().GetResult();
+                        break;
+
+                    case 1:
+                        director.LoadAllDetailsAllAsync().GetAwaiter().GetResult();
+                        break;
+
+                    default:
+                        throw new NotImplementedException();
+                }
             }
             catch (Exception ex)
             {
@@ -274,6 +289,7 @@ namespace UI
         private void backgroundWorker1_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
         {
             //download ends
+            poolintTimerCommand = 0;
             queriesCount++;
             queriesCountLabel.Text = queriesCount.ToString();
 
@@ -401,6 +417,7 @@ namespace UI
 
         private void startDownloadDataToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            poolintTimerCommand = 0; //загрузить данные
             poolingfTimer_Tick(sender, e);
         }
 
@@ -644,6 +661,12 @@ namespace UI
             }
             var msg = string.Join("; ", items.Select(p => $"{p.Provider} {p.WohnungId}"));
             Clipboard.SetText(msg);
+        }
+
+        private void загрузитьЗависшиеДеталиToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            poolintTimerCommand = 1; //загрузить зависшие детали
+            poolingfTimer_Tick(sender, e);
         }
     }
 }

@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Globalization;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Common
@@ -34,8 +37,11 @@ namespace Common
             {
                 return null;
             }
-            
-            if (decimal.TryParse(str.Replace(".", "").Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture, out var result))
+
+            var cleaned = str.Replace(".", "").Replace(",", ".");
+            cleaned = string.Concat(cleaned.Where(c => Char.IsDigit(c) || c == '.'));
+
+            if (decimal.TryParse(cleaned, NumberStyles.Any, CultureInfo.InvariantCulture, out var result))
             {
                 return result;
             }
@@ -85,7 +91,7 @@ namespace Common
 
             if (parser.Regex != null)
             {
-                var task1 = Task.Run(() => parser.Regex.Match(html).Groups["value"].Value);
+                var task1 = Task.Run(() => GetValue(parser.Regex, html));
                 var task2 = Task.Delay(10000);
                 var taskResult = await Task.WhenAny(task1, task2);
                 if (taskResult == task2)
@@ -101,6 +107,56 @@ namespace Common
             }
 
             return result;
+        }
+
+        public static async Task<string> ParseSafeAsync(Parser[] parser, string property, string html, string description, ILog log)
+        {
+            if (parser == null || ! parser.Any())
+            {
+                return null;
+            }
+            
+            var result = new StringBuilder();
+            foreach (var p in parser)
+            {
+                var value = await ParseSafeAsync(p, property, html, description, log);
+                result.AppendLine(value);
+            }
+            return result.ToString();
+        }
+
+        private static string GetValue(Regex regex, string html)
+        {
+            if (string.IsNullOrEmpty(html))
+            {
+                return null;
+            }
+
+            var match = regex.Match(html);
+            if (!match.Success)
+            {
+                return null;
+            }
+
+            var groupNames = regex.GetGroupNames();
+            if (groupNames.Contains("value"))
+            {
+                return match.Groups["value"].Value;
+            }
+
+            var sb = new StringBuilder();
+            for (var i = 1; i < 10; i++)
+            {
+                var groupName = $"value{i}";
+                if (!groupNames.Contains(groupName))
+                {
+                    break;
+                }
+                var vali = match.Groups[groupName].Value;
+                sb.Append(vali);
+            }
+
+            return sb.ToString();
         }
 
         public static async Task<decimal?> ParseSafeDecimalAsync(Parser parser, string property, string html, string description, ILog log)

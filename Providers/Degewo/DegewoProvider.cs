@@ -49,7 +49,7 @@ namespace Providers.Degewo
 
         protected override Parser DetailsBezirkParser { get; } = null;
 
-        protected override Parser DetailsBeschreibungParser { get; } = new Parser(new Regex("Ausstattung</cite><p>(?<value>[^<]+)</p>"));
+        protected override Parser[] DetailsBeschreibungParser { get; } = new[] { new Parser(new Regex("Ausstattung</cite><p>(?<value>[^<]+)</p>")) };
 
         protected override Parser DetailsEtageParser { get; } = new Parser(new Regex("Geschoss / Anzahl</td><td class='teaser-tileset__table-item'>(?<value>\\d+)\\W*/\\W*\\d+</td></tr>"));
 

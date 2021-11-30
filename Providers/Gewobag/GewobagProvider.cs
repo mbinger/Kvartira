@@ -26,7 +26,7 @@ namespace Providers.Gewobag
         protected override Parser DetailsKautionParser { get; } = new Parser(new Regex("Kaution</div><div[^>]+>(?<value>[0-9\\,]+)"));
         protected override Parser DetailsAnschriftParser { get; } = new Parser(new Regex("Anschrift</div><div[^>]+>(?<value>[^>]+)</div>"));
         protected override Parser DetailsBezirkParser { get; } = new Parser(new Regex("Bezirk/Ortsteil</div><div[^>]+>(?<value>[^>]+)</div>"));
-        protected override Parser DetailsBeschreibungParser { get; } = new Parser(new Regex("Beschreibung</div><div[^>]+>(?<value>[^>]+)</div>"));
+        protected override Parser[] DetailsBeschreibungParser { get; } = new [] { new Parser(new Regex("Beschreibung</div><div[^>]+>(?<value>[^>]+)</div>")) };
         protected override Parser DetailsEtageParser { get; } = new Parser(new Regex("Etage</div><div[^>]+>(?<value>\\d+)</div>"));
         protected override Parser DetailsEtagenParser { get; } = null;
         protected override Parser DetailsZimmerParser { get; } = new Parser(new Regex("Anzahl Zimmer</div><div[^>]+>(?<value>\\d+)</div>"));

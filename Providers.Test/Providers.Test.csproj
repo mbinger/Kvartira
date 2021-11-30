@@ -86,6 +86,11 @@
     <None Include="Html\2021_11_10_07_09_57_DEGEWO_details_W3110-02304-0197-0201.zip" />
     <None Include="Html\2021_11_10_11_13_56_DEGEWO_details_W1400-51813-0012-0304.zip" />
     <None Include="Html\2021_11_10_11_14_12_DEGEWO_details_W1150-00427-0207-0503.zip" />
+    <None Include="Html\2021_11_30_12_20_45_ImmoScout24 Treptow-Köpenick page 1.zip" />
+    <None Include="Html\2021_11_30_12_20_52_ImmoScout24 Treptow-Köpenick page 2.zip" />
+    <None Include="Html\2021_11_30_12_20_56_ImmoScout24 Treptow-Köpenick page 3.zip" />
+    <None Include="Html\2021_11_30_12_47_17_ImmoScout24 Captcha.zip" />
+    <None Include="Html\2021_11_30_12_48_27_ImmoScout24_details_130410164.zip" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

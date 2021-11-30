@@ -17,10 +17,13 @@ namespace Common
         {
             try
             {
-                var logItem = $"[{DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss")}] {str}";
-                Console.WriteLine(logItem);
-                Debug.WriteLine(logItem);
-                File.AppendAllLines(appConfig.LogFile, new[] { logItem });
+                if (!string.IsNullOrEmpty(appConfig.LogFile))
+                {
+                    var logItem = $"[{DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss")}] {str}";
+                    Console.WriteLine(logItem);
+                    Debug.WriteLine(logItem);
+                    File.AppendAllLines(appConfig.LogFile, new[] { logItem });
+                }
             }
             catch (Exception ex)
             {

@@ -39,8 +39,8 @@ namespace Common
 
         public Task Delay()
         {
-            //todo:
-            return Task.CompletedTask;
+            var delay = random.Next(1000, 3000);
+            return Task.Delay(delay);
         }
 
         private TimeSpan GetTimeOut = TimeSpan.FromMinutes(5);
@@ -66,8 +66,6 @@ namespace Common
             {
                 if (responses.TryGetValue(url, out var content2))
                 {
-                    responses.Remove(url);
-
                     return new Response
                     {
                         HttpStatusCode = 200,
@@ -81,6 +79,7 @@ namespace Common
                 }
             }
 
+            responses.Remove(url);
             requests.Add(url);
 
             Start();
@@ -92,7 +91,6 @@ namespace Common
             {
                 if (responses.TryGetValue(url, out var content2))
                 {
-                    responses.Remove(url);
                     ct.Cancel();
 
                     return new Response
@@ -147,17 +145,30 @@ namespace Common
                     {
                         var requestExits = requests.TryTake(out var url);
 
-                        return new HttpResponse
+                        if (requestExits)
                         {
-                            StatusCode = "200",
-                            ContentAsUTF8 = requestExits
-                                ? url
-                                : "",
-                            Headers = new Dictionary<string, string>
+                            return new HttpResponse
                             {
-                            { "Content-Type", "text/plain"}
-                            }
-                        };
+                                StatusCode = "200",
+                                ContentAsUTF8 = url,
+                                Headers = new Dictionary<string, string>
+                                {
+                                    { "Content-Type", "text/plain"}
+                                }
+                            };
+                        }
+                        else
+                        {
+                            return new HttpResponse
+                            {
+                                StatusCode = "200",
+                                ContentAsUTF8 = "",
+                                Headers = new Dictionary<string, string>
+                                {
+                                    { "Content-Type", "text/plain"}
+                                }
+                            };
+                        }
                     }
                 };
                 requestListener = new HttpServer(82, new List<Route> { route });

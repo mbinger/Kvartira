@@ -78,6 +78,7 @@ namespace UI
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.copyIdToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.загрузитьЗависшиеДеталиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -182,7 +183,8 @@ namespace UI
             this.dataToolStripSplitButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.startDownloadDataToolStripMenuItem,
             this.exportDataToolStripMenuItem,
-            this.importDataToolStripMenuItem});
+            this.importDataToolStripMenuItem,
+            this.загрузитьЗависшиеДеталиToolStripMenuItem});
             this.dataToolStripSplitButton.Image = ((System.Drawing.Image)(resources.GetObject("dataToolStripSplitButton.Image")));
             this.dataToolStripSplitButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.dataToolStripSplitButton.Name = "dataToolStripSplitButton";
@@ -192,21 +194,21 @@ namespace UI
             // startDownloadDataToolStripMenuItem
             // 
             this.startDownloadDataToolStripMenuItem.Name = "startDownloadDataToolStripMenuItem";
-            this.startDownloadDataToolStripMenuItem.Size = new System.Drawing.Size(249, 26);
+            this.startDownloadDataToolStripMenuItem.Size = new System.Drawing.Size(282, 26);
             this.startDownloadDataToolStripMenuItem.Text = "Старт загрузки данных";
             this.startDownloadDataToolStripMenuItem.Click += new System.EventHandler(this.startDownloadDataToolStripMenuItem_Click);
             // 
             // exportDataToolStripMenuItem
             // 
             this.exportDataToolStripMenuItem.Name = "exportDataToolStripMenuItem";
-            this.exportDataToolStripMenuItem.Size = new System.Drawing.Size(249, 26);
+            this.exportDataToolStripMenuItem.Size = new System.Drawing.Size(282, 26);
             this.exportDataToolStripMenuItem.Text = "Экспорт данных";
             this.exportDataToolStripMenuItem.Click += new System.EventHandler(this.exportDataToolStripMenuItem_Click);
             // 
             // importDataToolStripMenuItem
             // 
             this.importDataToolStripMenuItem.Name = "importDataToolStripMenuItem";
-            this.importDataToolStripMenuItem.Size = new System.Drawing.Size(249, 26);
+            this.importDataToolStripMenuItem.Size = new System.Drawing.Size(282, 26);
             this.importDataToolStripMenuItem.Text = "Импорт данных";
             this.importDataToolStripMenuItem.Click += new System.EventHandler(this.importDataToolStripMenuItem_Click);
             // 
@@ -473,7 +475,7 @@ namespace UI
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.copyIdToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(306, 54);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(306, 28);
             // 
             // copyIdToolStripMenuItem
             // 
@@ -481,6 +483,13 @@ namespace UI
             this.copyIdToolStripMenuItem.Size = new System.Drawing.Size(305, 24);
             this.copyIdToolStripMenuItem.Text = "Скопировать ID в буфер обмена";
             this.copyIdToolStripMenuItem.Click += new System.EventHandler(this.copyIdToolStripMenuItem_Click);
+            // 
+            // загрузитьЗависшиеДеталиToolStripMenuItem
+            // 
+            this.загрузитьЗависшиеДеталиToolStripMenuItem.Name = "загрузитьЗависшиеДеталиToolStripMenuItem";
+            this.загрузитьЗависшиеДеталиToolStripMenuItem.Size = new System.Drawing.Size(282, 26);
+            this.загрузитьЗависшиеДеталиToolStripMenuItem.Text = "Загрузить зависшие детали";
+            this.загрузитьЗависшиеДеталиToolStripMenuItem.Click += new System.EventHandler(this.загрузитьЗависшиеДеталиToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -556,6 +565,7 @@ namespace UI
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem copyIdToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem загрузитьЗависшиеДеталиToolStripMenuItem;
     }
 }
 

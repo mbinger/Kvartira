@@ -2,8 +2,10 @@
 using Data;
 using Providers;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace UI
@@ -56,18 +58,51 @@ namespace UI
         /// <returns>Count of the new items</returns>
         public async Task<int> LoadAsync()
         {
-            var result = 0;
+            var result = new ConcurrentBag<int>();
             var searchList = config.SearchConfig.Where(p => p.Active).ToList();
-            foreach (var search in searchList)
+
+            var searchListGroupByProvider = searchList.GroupBy(p => p.ProviderName).ToList();
+
+            var providerTasks = new List<Task>();
+            foreach (var providerItems in searchListGroupByProvider)
             {
                 try
                 {
-                    var provider = GetProviderByName(search.ProviderName);
+                    var provider = GetProviderByName(providerItems.Key);
                     if (provider == null)
                     {
                         continue;
                     }
 
+                    var providerTask = Task.Run(async () =>
+                    {
+                        var res = await ProcessProvider(provider, providerItems.ToList());
+                        result.Add(res);
+                    });
+                    providerTasks.Add(providerTask);
+                }
+                catch (Exception ex)
+                {
+                    log.Write("ERROR Director.LoadAsync\n" + ex);
+                }
+            }
+
+            await Task.WhenAll(providerTasks);
+
+            await LoadAllDetailsAllAsync();
+
+            var summ = result.Sum();
+            return summ;
+        }
+
+
+        private async Task<int> ProcessProvider(IProvider provider, List<Search> items)
+        {
+            try
+            {
+                var newIdsGlobal = new List<string>();
+                foreach (var search in items)
+                {
                     var headers = await provider.LoadIndexAsync(search);
                     if (headers == null)
                     {
@@ -79,11 +114,11 @@ namespace UI
                         headers.WohnungIds = headers.WohnungIds.Distinct().ToList();
                     }
 
-                    List<string> newIds;
                     using (var db = new WohnungDb())
                     {
                         var existingIds = db.WohnungHeaders.Where(p => p.Provider == provider.Name).Select(p => p.WohnungId).ToList();
-                        newIds = headers.WohnungIds.Where(p => !existingIds.Contains(p)).ToList();
+                        var newIds = headers.WohnungIds.Where(p => !existingIds.Contains(p)).ToList();
+                        newIdsGlobal.AddRange(newIds);
 
                         //insert
                         var now = DateTime.Now;
@@ -127,18 +162,16 @@ namespace UI
 
                         await db.SaveChangesAsync();
                     }
+                }
 
-                    result += newIds.Count();
-                }
-                catch (Exception ex)
-                {
-                    log.Write("ERROR Director.LoadAsync\n" + ex);
-                }
+                return newIdsGlobal.Distinct().Count();
+            }
+            catch (Exception ex)
+            {
+                log.Write($"ERROR Director.ProcessProvider({provider.Name}).\n" + ex);
             }
 
-            await LoadAllDetailsAllAsync();
-
-            return result;
+            return -1;
         }
 
         public async Task<bool> TryReloadDetails(string providerName, string wohnungId)
@@ -202,7 +235,7 @@ namespace UI
             public string WohnungId { get; set; }
         }
 
-        private async Task LoadAllDetailsAllAsync()
+        public async Task LoadAllDetailsAllAsync()
         {
             //load details
             List<ProviderWohnungId> ids;
@@ -218,56 +251,85 @@ namespace UI
                     }).ToList();
             }
 
-            foreach (var id in ids)
+            var idsGroupedByProvider = ids.GroupBy(p => p.Provider);
+
+            var tasks = new List<Task>();
+
+            foreach (var providerIds in idsGroupedByProvider)
             {
-                var provider = GetProviderByName(id.Provider);
+                var provider = GetProviderByName(providerIds.Key);
                 if (provider == null)
                 {
                     continue;
                 }
 
-                var card = await provider.LoadDetailsAsync(id.WohnungId, false);
+                var task = ProcessProviderCards(provider, providerIds.ToList());
+                tasks.Add(task);
+            }
 
-                var now = DateTime.Now;
+            await Task.WhenAll(tasks);
+        }
 
-                using (var db = new WohnungDb())
+        private async Task ProcessProviderCards(IProvider provider, List<ProviderWohnungId> ids)
+        {
+            try
+            {
+                foreach (var id in ids)
                 {
-                    if (card != null)
+                    try
                     {
-                        var detailsEntity = new WohnungDetailsEntity
-                        {
-                            WohnungHeaderId = id.HeaderId,
-                        };
-                        BindCardToEntity(card, detailsEntity);
-                        db.WohnungDetails.Add(detailsEntity);
+                        var card = await provider.LoadDetailsAsync(id.WohnungId, false);
 
-                        await db.SaveChangesAsync();
+                        var now = DateTime.Now;
 
-                        var providerHealthEntry = db.ProviderHealthLogs.FirstOrDefault(p => p.ProviderName == provider.Name);
-                        if (providerHealthEntry == null)
+                        using (var db = new WohnungDb())
                         {
-                            providerHealthEntry = new ProviderHealthEntity
+                            if (card != null)
                             {
-                                ProviderName = provider.Name
-                            };
-                            db.ProviderHealthLogs.Add(providerHealthEntry);
-                        }
+                                var detailsEntity = new WohnungDetailsEntity
+                                {
+                                    WohnungHeaderId = id.HeaderId,
+                                };
+                                BindCardToEntity(card, detailsEntity);
+                                db.WohnungDetails.Add(detailsEntity);
 
-                        providerHealthEntry.DetailsLoaded = now;
-                        if (card.Complete)
-                        {
-                            providerHealthEntry.AllDetailsComlete = now;
-                        }
+                                await db.SaveChangesAsync();
 
-                        await db.SaveChangesAsync();
+                                var providerHealthEntry = db.ProviderHealthLogs.FirstOrDefault(p => p.ProviderName == provider.Name);
+                                if (providerHealthEntry == null)
+                                {
+                                    providerHealthEntry = new ProviderHealthEntity
+                                    {
+                                        ProviderName = provider.Name
+                                    };
+                                    db.ProviderHealthLogs.Add(providerHealthEntry);
+                                }
+
+                                providerHealthEntry.DetailsLoaded = now;
+                                if (card.Complete)
+                                {
+                                    providerHealthEntry.AllDetailsComlete = now;
+                                }
+
+                                await db.SaveChangesAsync();
+                            }
+                            else
+                            {
+                                var header = db.WohnungHeaders.Single(p => p.Id == id.HeaderId);
+                                header.LoadDetailsTries++;
+                                await db.SaveChangesAsync();
+                            }
+                        }
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        var header = db.WohnungHeaders.Single(p => p.Id == id.HeaderId);
-                        header.LoadDetailsTries++;
-                        await db.SaveChangesAsync();
+                        log.Write($"ERROR Director.ProcessProviderCards1({provider.Name}).\n" + ex);
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                log.Write($"ERROR Director.ProcessProviderCards2({provider.Name}).\n" + ex);
             }
         }
 

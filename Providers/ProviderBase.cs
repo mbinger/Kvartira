@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -25,7 +26,7 @@ namespace Providers
         protected abstract Parser DetailsKautionParser { get; }
         protected abstract Parser DetailsAnschriftParser { get; }
         protected abstract Parser DetailsBezirkParser { get; }
-        protected abstract Parser DetailsBeschreibungParser { get; }
+        protected abstract Parser[] DetailsBeschreibungParser { get; }
         protected abstract Parser DetailsEtageParser { get; }
         protected abstract Parser DetailsEtagenParser { get; }
         protected abstract Parser DetailsWbsParser { get; }
@@ -129,13 +130,18 @@ namespace Providers
             return nextPageUrl;
         }
 
+        protected virtual Task<Response> Download(string url, bool fromcache, string description)
+        {
+            return downloader.GetAsync(url, fromcache, description, true);
+        }
+
         private async Task<LoadIdsResult> LoadIndexPrivateAsync(string url, string description, int page)
         {
             try
             {
                 await downloader.Delay();
 
-                var content = await downloader.GetAsync(url, false, Name + "_" + description + $" page {page}", true);
+                var content = await Download(url, false, Name + "_" + description + $" page {page}");
 
                 log.Write($"{Name} {description} GET page {page} {url} HTTP {content.HttpStatusCode} {content.Exception}");
 
@@ -203,7 +209,7 @@ namespace Providers
                     await downloader.Delay();
                 }
                 var url = GetOpenDetailsUrl(wohnungId);
-                var response = await downloader.GetAsync(url, false, Name + "_details_" + wohnungId, true);
+                var response = await Download(url, false, Name + "_details_" + wohnungId);
                 if (!string.IsNullOrEmpty(response.Exception))
                 {
                     return null;

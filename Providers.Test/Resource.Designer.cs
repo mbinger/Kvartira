@@ -129,5 +129,55 @@ namespace Providers.Test {
                 return ((byte[])(obj));
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] _2021_11_30_12_20_45_ImmoScout24_Treptow_Köpenick_page_1 {
+            get {
+                object obj = ResourceManager.GetObject("_2021_11_30_12_20_45_ImmoScout24_Treptow_Köpenick_page_1", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] _2021_11_30_12_20_52_ImmoScout24_Treptow_Köpenick_page_2 {
+            get {
+                object obj = ResourceManager.GetObject("_2021_11_30_12_20_52_ImmoScout24_Treptow_Köpenick_page_2", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] _2021_11_30_12_20_56_ImmoScout24_Treptow_Köpenick_page_3 {
+            get {
+                object obj = ResourceManager.GetObject("_2021_11_30_12_20_56_ImmoScout24_Treptow_Köpenick_page_3", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] _2021_11_30_12_47_17_ImmoScout24_Captcha {
+            get {
+                object obj = ResourceManager.GetObject("_2021_11_30_12_47_17_ImmoScout24_Captcha", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] _2021_11_30_12_48_27_ImmoScout24_details_130410164 {
+            get {
+                object obj = ResourceManager.GetObject("_2021_11_30_12_48_27_ImmoScout24_details_130410164", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }

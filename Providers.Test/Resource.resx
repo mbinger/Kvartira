@@ -139,4 +139,19 @@
   <data name="_2021_11_10_11_14_12_DEGEWO_details_W1150_00427_0207_0503" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Html\2021_11_10_11_14_12_DEGEWO_details_W1150-00427-0207-0503.zip;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="_2021_11_30_12_20_45_ImmoScout24_Treptow_Köpenick_page_1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Html\2021_11_30_12_20_45_ImmoScout24 Treptow-Köpenick page 1.zip;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="_2021_11_30_12_20_52_ImmoScout24_Treptow_Köpenick_page_2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Html\2021_11_30_12_20_52_ImmoScout24 Treptow-Köpenick page 2.zip;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="_2021_11_30_12_20_56_ImmoScout24_Treptow_Köpenick_page_3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Html\2021_11_30_12_20_56_ImmoScout24 Treptow-Köpenick page 3.zip;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="_2021_11_30_12_47_17_ImmoScout24_Captcha" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Html\2021_11_30_12_47_17_ImmoScout24 Captcha.zip;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="_2021_11_30_12_48_27_ImmoScout24_details_130410164" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Html\2021_11_30_12_48_27_ImmoScout24_details_130410164.zip;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
 </root>
