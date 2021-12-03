@@ -95,7 +95,7 @@ namespace Providers.ImmobilienScout24
 
         protected override Parser DetailsFreiAbParser { get; } = new Parser(new Regex("<dd class=\"is24qa-bezugsfrei-ab\\s[^>]+>(?<value>[^<]+)"), (value) =>
         {
-            value = value.Trim();
+            value = value?.Trim();
             if (value == "sofort")
             {
                 return DateTime.Today.ToString("dd.MM.yyyy");

@@ -426,7 +426,7 @@ namespace UI
             if (Math.Abs((entry.DetailsLoaded.Value - entry.AllDetailsComlete.Value).TotalMinutes) >= 30)
             {
                 result.Reason = $"Детали квартир загружаются неполностью с {entry.DetailsLoaded.Value.ToString(dateTimePattern)}";
-                result.Color = ProviderHealthColor.Red;
+                result.Color = ProviderHealthColor.Yellow;
                 return result;
             }
 

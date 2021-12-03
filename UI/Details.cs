@@ -247,7 +247,7 @@ namespace UI
                 MessageBox.Show("Адрес не загружен");
                 return;
             }
-            var parts = ansachrifft.Replace(",", "").Split(' ');
+            var parts = ansachrifft.Replace(",", " ").Replace("  ", " ").Split(' ');
             var query = string.Join("+", parts);
             var url = "https://www.google.de/maps/place/" + query;
 
@@ -274,20 +274,28 @@ namespace UI
             backgroundWorker1.RunWorkerAsync();
         }
 
-        private void SaveBtn_Click(object sender, EventArgs e)
+        private void DoSave(bool ask)
         {
             if (!Save(true))
             {
                 return;
             }
 
-            if (MessageBox.Show("Сохранить изменения ?", "Вопрос", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) != DialogResult.Yes)
+            if (ask)
             {
-                return;
+                if (MessageBox.Show("Сохранить изменения ?", "Вопрос", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) != DialogResult.Yes)
+                {
+                    return;
+                }
             }
 
             Save(false);
             parent.RefreshGrid();
+        }
+
+        private void SaveBtn_Click(object sender, EventArgs e)
+        {
+            DoSave(true);
         }
 
         private void DeleteBtn_Click(object sender, EventArgs e)
@@ -354,6 +362,12 @@ namespace UI
             parent.RefreshGrid();
 
             MessageBox.Show("Карточка успешно загружена и сохранена");
+        }
+
+        private void meldenBtn_Click(object sender, EventArgs e)
+        {
+            GemeldetTb.Text = DateTime.Today.ToString(dtFormat);
+            DoSave(false);
         }
     }
 }
