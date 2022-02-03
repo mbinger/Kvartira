@@ -9,10 +9,11 @@ namespace Providers.Degewo
 {
     public class DegewoProvider: ProviderBase
     {
-        public DegewoProvider(IDownloader downloader, ILog log) : base(downloader, log)
+        public DegewoProvider(IDownloader downloader, ILog log, ILog rulog) : base(downloader, log, rulog)
         {
         }
 
+        public override bool NeedZombieBrowser { get; } = false;
         public override string Name { get; } = "DEGEWO";
         protected override string DetailsUrl { get; } = "https://immosuche.degewo.de/de/properties/{0}";
 

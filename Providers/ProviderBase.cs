@@ -36,13 +36,17 @@ namespace Providers
         protected abstract Parser DetailsBalkonParser { get; }
         protected abstract Parser DetailsKellerParser { get; }
 
+        public abstract bool NeedZombieBrowser { get; }
+
         protected readonly IDownloader downloader;
         protected readonly ILog log;
+        protected readonly ILog rulog;
 
-        public ProviderBase(IDownloader downloader, ILog log)
+        public ProviderBase(IDownloader downloader, ILog log, ILog rulog)
         {
             this.downloader = downloader;
             this.log = log;
+            this.rulog = rulog;
         }
 
         public virtual Task<LoadIdsResult> LoadIndexAsync(Search search)
@@ -144,6 +148,7 @@ namespace Providers
                 var content = await Download(url, false, Name + "_" + description + $" page {page}");
 
                 log.Write($"{Name} {description} GET page {page} {url} HTTP {content.HttpStatusCode} {content.Exception}");
+                rulog.Write($"{Name} загрузка {description} страница {page}...");
 
                 if (!string.IsNullOrEmpty(content.Exception) || string.IsNullOrEmpty(content.Content))
                 {
@@ -156,6 +161,7 @@ namespace Providers
                 var nichtsGefunden = await Scanner.ParseSafeBoolAsync(NichtsGefundenParser, "index-nichts-gefunden", content.Content, description, log);
                 if (nichtsGefunden == true)
                 {
+                    rulog.Write($"{Name} ничего не найдено");
                     return new LoadIdsResult
                     {
                         PagesCount = 0
@@ -164,6 +170,7 @@ namespace Providers
 
                 //get IDS
                 var ids = ParseIds(content.Content);
+                rulog.Write($"{Name} считано {ids.Count} квартир");
 
                 var result = new LoadIdsResult
                 {
@@ -190,6 +197,7 @@ namespace Providers
             catch (Exception ex)
             {
                 log.Write($"ERROR {GetType().Name}.{nameof(LoadIndexAsync)}\n" + ex.ToString());
+                rulog.Write($"{Name} ошибка");
             }
             return null;
         }
@@ -204,6 +212,7 @@ namespace Providers
         {
             try
             {
+                rulog.Write($"{Name} загрузка квартиры {wohnungId}");
                 if (!immediately)
                 {
                     await downloader.Delay();
@@ -222,6 +231,7 @@ namespace Providers
             }
             catch (Exception ex)
             {
+                rulog.Write($"{Name} ошибка загрузка квартиры {wohnungId}");
                 log.Write($"ERROR {GetType().Name}.{nameof(LoadDetailsAsync)}\n" + ex.ToString());
             }
 

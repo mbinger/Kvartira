@@ -26,7 +26,7 @@ namespace Providers.Test
             });
             
             var logMock = new Mock<ILog>(MockBehavior.Loose);
-            var provider = new ImmobilienScout24Provider(downloader, logMock.Object);
+            var provider = new ImmobilienScout24Provider(downloader, logMock.Object, logMock.Object);
 
             var result = await provider.LoadIndexAsync(new Search
             {
@@ -43,7 +43,7 @@ namespace Providers.Test
             var downloader = new ResDownloader(new[] { Resource._2021_11_30_12_48_27_ImmoScout24_details_130410164 });
 
             var logMock = new Mock<ILog>(MockBehavior.Loose);
-            var provider = new ImmobilienScout24Provider(downloader, logMock.Object);
+            var provider = new ImmobilienScout24Provider(downloader, logMock.Object, logMock.Object);
 
             var details = await provider.LoadDetailsAsync("130410164");
 

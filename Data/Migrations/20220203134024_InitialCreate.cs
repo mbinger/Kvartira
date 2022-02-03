@@ -52,7 +52,8 @@ namespace Data.Migrations
                     Beschreibung = table.Column<string>(type: "TEXT", maxLength: 1024, nullable: true),
                     Wbs = table.Column<bool>(type: "INTEGER", nullable: true),
                     Balkon = table.Column<bool>(type: "INTEGER", nullable: true),
-                    Keller = table.Column<bool>(type: "INTEGER", nullable: true)
+                    Keller = table.Column<bool>(type: "INTEGER", nullable: true),
+                    DetailsLoaded = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {

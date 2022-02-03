@@ -8,11 +8,13 @@ namespace Providers.ImmobilienScout24
 {
     public class ImmobilienScout24Provider : ProviderBase
     {
-        public ImmobilienScout24Provider(IDownloader downloader, ILog log) : base(downloader, log)
+        public ImmobilienScout24Provider(IDownloader downloader, ILog log, ILog rulog) : base(downloader, log, rulog)
         {
         }
 
         public override string Name { get; } = "IMMO SCOUT 24";
+
+        public override bool NeedZombieBrowser { get; } = true;
 
         protected override string DetailsUrl { get; } = "https://www.immobilienscout24.de/expose/{0}#/";
 

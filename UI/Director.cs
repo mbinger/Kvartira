@@ -5,7 +5,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace UI
@@ -14,13 +13,15 @@ namespace UI
     {
         private readonly AppConfig config;
         private readonly IProvider[] providers;
-        private readonly Log log;
+        private readonly ILog log;
+        private readonly ILog rulog;
 
-        public Director(AppConfig config, IProvider[] providers, Log log)
+        public Director(AppConfig config, IProvider[] providers, ILog log, ILog rulog)
         {
             this.config = config;
             this.providers = providers;
             this.log = log;
+            this.rulog = rulog;
         }
 
         private void BindCardToEntity(WohnungCard card, WohnungEntity entity)
@@ -61,9 +62,8 @@ namespace UI
             var result = new ConcurrentBag<int>();
             var searchList = config.SearchConfig.Where(p => p.Active).ToList();
 
-            var searchListGroupByProvider = searchList.GroupBy(p => p.ProviderName).ToList();
+            var searchListGroupByProvider = searchList.GroupBy(p => p.ProviderName).OrderBy(p => GetProviderByName(p.Key)?.NeedZombieBrowser ?? false).ToList();
 
-            var providerTasks = new List<Task>();
             foreach (var providerItems in searchListGroupByProvider)
             {
                 try
@@ -74,20 +74,14 @@ namespace UI
                         continue;
                     }
 
-                    var providerTask = Task.Run(async () =>
-                    {
-                        var res = await ProcessProvider(provider, providerItems.ToList());
-                        result.Add(res);
-                    });
-                    providerTasks.Add(providerTask);
+                    var res = await ProcessProvider(provider, providerItems.ToList());
+                    result.Add(res);
                 }
                 catch (Exception ex)
                 {
                     log.Write("ERROR Director.LoadAsync\n" + ex);
                 }
             }
-
-            await Task.WhenAll(providerTasks);
 
             await LoadAllDetailsAllAsync();
 
@@ -118,6 +112,9 @@ namespace UI
                     {
                         var existingIds = db.Wohnungen.Where(p => p.Provider == provider.Name).Select(p => p.WohnungId).ToList();
                         var newIds = headers.WohnungIds.Where(p => !existingIds.Contains(p)).ToList();
+
+                        rulog.Write($"{provider.Name} найдено {headers.WohnungIds.Count()} квартир, из них {newIds.Count()} новые");
+
                         newIdsGlobal.AddRange(newIds);
 
                         //insert
@@ -232,7 +229,7 @@ namespace UI
             using (var db = new WohnungDb())
             {
                 ids = db.Wohnungen
-                    .Where(p => p.LoadDetailsTries < 3 && p.SucheDetails == null)
+                    .Where(p => p.LoadDetailsTries < 3 && !p.DetailsLoaded)
                     .Select(p => new ProviderWohnungId
                     {
                         HeaderId = p.Id,
@@ -243,8 +240,6 @@ namespace UI
 
             var idsGroupedByProvider = ids.GroupBy(p => p.Provider);
 
-            var tasks = new List<Task>();
-
             foreach (var providerIds in idsGroupedByProvider)
             {
                 var provider = GetProviderByName(providerIds.Key);
@@ -253,21 +248,20 @@ namespace UI
                     continue;
                 }
 
-                var task = ProcessProviderCards(provider, providerIds.ToList());
-                tasks.Add(task);
+                await ProcessProviderCards(provider, providerIds.ToList());
             }
-
-            await Task.WhenAll(tasks);
         }
 
         private async Task ProcessProviderCards(IProvider provider, List<ProviderWohnungId> ids)
         {
             try
             {
-                foreach (var id in ids)
+                for (var i = 0;i< ids.Count; i++)
                 {
                     try
                     {
+                        var id = ids[i];
+                        rulog.Write($"{provider.Name} загрузка деталей {i+1}/{ids.Count}");
                         var card = await provider.LoadDetailsAsync(id.WohnungId, false);
 
                         var now = DateTime.Now;
@@ -278,6 +272,7 @@ namespace UI
                             {
                                 var header = db.Wohnungen.Single(p => p.Id == id.HeaderId);
                                 BindCardToEntity(card, header);
+                                header.DetailsLoaded = true;
 
                                 await db.SaveChangesAsync();
 

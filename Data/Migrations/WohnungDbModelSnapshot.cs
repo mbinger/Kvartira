@@ -66,6 +66,9 @@ namespace Data.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("DetailsLoaded")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int?>("Etage")
                         .HasColumnType("INTEGER");
 

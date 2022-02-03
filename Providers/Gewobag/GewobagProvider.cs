@@ -9,11 +9,12 @@ namespace Providers.Gewobag
 {
     public class GewobagProvider : ProviderBase
     {
-        public GewobagProvider(IDownloader downloader, ILog log) : base(downloader, log)
+        public GewobagProvider(IDownloader downloader, ILog log, ILog rulog) : base(downloader, log, rulog)
         {
         }
         
         public override string Name { get; } = "GEWOBAG";
+        public override bool NeedZombieBrowser { get; } = false;
         protected override string DetailsUrl { get; } = "https://www.gewobag.de/fuer-mieter-und-mietinteressenten/mietangebote/{0}/";
         
         protected override Regex GetIdsRegex => new Regex("https://www.gewobag.de/fuer-mieter-und-mietinteressenten/mietangebote/(?<value>[0-9a-zA-Z\\-]+)/");

@@ -55,5 +55,6 @@ namespace Providers
         Task<LoadIdsResult> LoadIndexAsync(Search config);
         Task<WohnungCard> LoadDetailsAsync(string wohnungId, bool immediately);
         string GetOpenDetailsUrl(string wohnungId);
+        bool NeedZombieBrowser { get; }
     }
 }

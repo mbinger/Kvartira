@@ -27,6 +27,7 @@ namespace UI
         private int queriesCount = 0;
         private DateTime NextQuery;
         private DateTime StartLoading;
+        RuLog rulog;
 
         public Form1()
         {
@@ -64,18 +65,19 @@ namespace UI
                 toolStripTextBoxRating.Text = (appConfig.FilterImportanceInitialValue ?? 1).ToString();
 
                 log = new Log(appConfig);
+                rulog = new RuLog();
 
                 var downloader = new HttpDownloader(log, appConfig);
                 var browserDownloader = new BrowserDownloader(log, appConfig);
 
                 providers = new IProvider[]
                 {
-                new GewobagProvider(downloader, log),
-                new DegewoProvider(downloader, log),
-                new ImmobilienScout24Provider(browserDownloader, log)
+                    new GewobagProvider(downloader, log, rulog),
+                    new DegewoProvider(downloader, log, rulog),
+                    new ImmobilienScout24Provider(browserDownloader, log, rulog)
                 };
 
-                director = new Director(appConfig, providers, log);
+                director = new Director(appConfig, providers, log, rulog);
 
                 //refresh
                 RefreshGrid();
@@ -92,6 +94,10 @@ namespace UI
                 {
                     WindowState = FormWindowState.Maximized;
                 }
+                rulog.StartPosition = FormStartPosition.Manual;
+                rulog.Left = this.Width - rulog.Width;
+                rulog.Top = this.Height - rulog.Height;
+                rulog.Show();
             }
             catch (Exception ex)
             {
@@ -457,7 +463,7 @@ namespace UI
                         Gesehen = header.Gesehen,
                         Gemeldet = header.Gemeldet,
                         LoadDetailsTries = header.LoadDetailsTries,
-                        Details = true
+                        Details = header.DetailsLoaded
                     };
 
                     item.Ueberschrift = header.Ueberschrift;
@@ -542,7 +548,8 @@ namespace UI
                             Beschreibung = item.Beschreibung,
                             Wbs = item.Wbs,
                             Balkon = item.Balkon,
-                            Keller = item.Keller
+                            Keller = item.Keller,
+                            DetailsLoaded = item.Details
                         };
 
                         db.Wohnungen.Add(header);
@@ -659,6 +666,11 @@ namespace UI
         {
             poolintTimerCommand = 1; //загрузить зависшие детали
             poolingfTimer_Tick(sender, e);
+        }
+
+        private void showLogButton_Click(object sender, EventArgs e)
+        {
+            rulog.Show();
         }
     }
 }

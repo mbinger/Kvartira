@@ -21,7 +21,7 @@ namespace Providers.Test
                 Resource._2021_11_10_07_03_31_DEGEWO_Degewo_alles_page_3
             });
             var logMock = new Mock<ILog>(MockBehavior.Loose);
-            var provider = new DegewoProvider(downloader, logMock.Object);
+            var provider = new DegewoProvider(downloader, logMock.Object, logMock.Object);
             
             var result = await provider.LoadIndexAsync(new Search
             {
@@ -37,7 +37,7 @@ namespace Providers.Test
         {
             var downloader = new ResDownloader(new[] { Resource._2021_11_10_07_08_42_DEGEWO_details_W1400_40274_0940_0404 });
             var logMock = new Mock<ILog>(MockBehavior.Loose);
-            var provider = new DegewoProvider(downloader, logMock.Object);
+            var provider = new DegewoProvider(downloader, logMock.Object, logMock.Object);
 
             var details = await provider.LoadDetailsAsync("W1400_40274_0940_0404");
 
@@ -66,7 +66,7 @@ namespace Providers.Test
         {
             var downloader = new ResDownloader(new[] { Resource._2021_11_10_07_09_57_DEGEWO_details_W3110_02304_0197_0201 });
             var logMock = new Mock<ILog>(MockBehavior.Loose);
-            var provider = new DegewoProvider(downloader, logMock.Object);
+            var provider = new DegewoProvider(downloader, logMock.Object, logMock.Object);
 
             var details = await provider.LoadDetailsAsync("W3110_02304_0197_0201");
 
@@ -95,7 +95,7 @@ namespace Providers.Test
         {
             var downloader = new ResDownloader(new[] { Resource._2021_11_10_11_13_56_DEGEWO_details_W1400_51813_0012_0304 });
             var logMock = new Mock<ILog>(MockBehavior.Loose);
-            var provider = new DegewoProvider(downloader, logMock.Object);
+            var provider = new DegewoProvider(downloader, logMock.Object, logMock.Object);
 
             var details = await provider.LoadDetailsAsync("W1400_51813_0012_0304");
 
@@ -124,7 +124,7 @@ namespace Providers.Test
         {
             var downloader = new ResDownloader(new[] { Resource._2021_11_10_11_14_12_DEGEWO_details_W1150_00427_0207_0503 });
             var logMock = new Mock<ILog>(MockBehavior.Loose);
-            var provider = new DegewoProvider(downloader, logMock.Object);
+            var provider = new DegewoProvider(downloader, logMock.Object, logMock.Object);
 
             var details = await provider.LoadDetailsAsync("W1150_00427_0207_0503");
 

@@ -63,5 +63,7 @@ namespace Data
         public bool? Balkon { get; set; }
 
         public bool? Keller { get; set; }
+
+        public bool DetailsLoaded { get; set; }
     }
 }

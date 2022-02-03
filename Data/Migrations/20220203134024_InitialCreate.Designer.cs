@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(WohnungDb))]
-    [Migration("20220203124016_InitialCreate")]
+    [Migration("20220203134024_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -67,6 +67,9 @@ namespace Data.Migrations
                     b.Property<string>("Bezirk")
                         .HasMaxLength(256)
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("DetailsLoaded")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int?>("Etage")
                         .HasColumnType("INTEGER");
