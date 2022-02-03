@@ -7,18 +7,18 @@ namespace Data
     {
         public static AppConfig AppConfig;
 
-        public virtual DbSet<WohnungHeaderEntity> WohnungHeaders { get; set; }
-        public virtual DbSet<WohnungDetailsEntity> WohnungDetails { get; set; }
         public virtual DbSet<ProviderHealthEntity> ProviderHealthLogs { get; set; }
+        public virtual DbSet<WohnungEntity> Wohnungen { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite($"Filename={AppConfig.DatabaseFile}");
+            var db = AppConfig?.DatabaseFile ?? @"c:\Kvartira\Db\WohnungDb.sqlite";
+            optionsBuilder.UseSqlite($"Filename={db}");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<WohnungHeaderEntity>().HasIndex(p => new { p.Provider, p.WohnungId }).IsUnique();
+            modelBuilder.Entity<WohnungEntity>().HasIndex(p => new { p.Provider, p.WohnungId }).IsUnique();
         }
     }
 }

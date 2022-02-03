@@ -1,5 +1,6 @@
 ﻿using Common;
 using Data;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Providers;
 using Providers.Degewo;
@@ -34,60 +35,68 @@ namespace UI
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            const string configFileName = "Config.json";
-            string configContent;
-            var path1 = Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "Config", configFileName);
-            var path2 = Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), configFileName);
-            if (File.Exists(path1))
+            try
             {
-                configContent = File.ReadAllText(path1);
-            }
-            else if (File.Exists(path2))
-            {
-                configContent = File.ReadAllText(path2);
-            }
-            else throw new Exception($"Configuration file not found:\n{path1}\n{path2}");
+                const string configFileName = "Config.json";
+                string configContent;
+                var path1 = Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "Config", configFileName);
+                var path2 = Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), configFileName);
+                if (File.Exists(path1))
+                {
+                    configContent = File.ReadAllText(path1);
+                }
+                else if (File.Exists(path2))
+                {
+                    configContent = File.ReadAllText(path2);
+                }
+                else throw new Exception($"Configuration file not found:\n{path1}\n{path2}");
 
-            appConfig = JsonConvert.DeserializeObject<AppConfig>(configContent);
-            WohnungDb.AppConfig = appConfig;
+                appConfig = JsonConvert.DeserializeObject<AppConfig>(configContent);
+                WohnungDb.AppConfig = appConfig;
 
-            using (var context = new WohnungDb())
-            {
-                context.Database.EnsureCreatedAsync().GetAwaiter().GetResult();
-            }
+                using (var context = new WohnungDb())
+                {
+                    context.Database.Migrate();
+                }
 
-            StatusToolStripComboBox.SelectedIndex = appConfig.FilterVisitedInitialValue ?? 0;
-            wbsComboBox.SelectedIndex = appConfig.FilterWbsInitialValue ?? 0;
-            toolStripTextBoxRating.Text = (appConfig.FilterImportanceInitialValue ?? 1).ToString();
+                StatusToolStripComboBox.SelectedIndex = appConfig.FilterVisitedInitialValue ?? 0;
+                wbsComboBox.SelectedIndex = appConfig.FilterWbsInitialValue ?? 0;
+                toolStripTextBoxRating.Text = (appConfig.FilterImportanceInitialValue ?? 1).ToString();
 
-            log = new Log(appConfig);
+                log = new Log(appConfig);
 
-            var downloader = new HttpDownloader(log, appConfig);
-            var browserDownloader = new BrowserDownloader(log, appConfig);
+                var downloader = new HttpDownloader(log, appConfig);
+                var browserDownloader = new BrowserDownloader(log, appConfig);
 
-            providers = new IProvider[]
-            {
+                providers = new IProvider[]
+                {
                 new GewobagProvider(downloader, log),
                 new DegewoProvider(downloader, log),
                 new ImmobilienScout24Provider(browserDownloader, log)
-            };
+                };
 
-            director = new Director(appConfig, providers, log);
+                director = new Director(appConfig, providers, log);
 
-            //refresh
-            RefreshGrid();
+                //refresh
+                RefreshGrid();
 
-            EnableTimer();
+                EnableTimer();
 
-            ShowProvidersRating();
+                ShowProvidersRating();
 
-            if (appConfig.RunMinimized)
-            {
-                WindowState = FormWindowState.Minimized;
+                if (appConfig.RunMinimized)
+                {
+                    WindowState = FormWindowState.Minimized;
+                }
+                else
+                {
+                    WindowState = FormWindowState.Maximized;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                WindowState = FormWindowState.Maximized;
+                MessageBox.Show(ex.ToString());
+                Application.Exit();
             }
         }
 
@@ -96,18 +105,17 @@ namespace UI
             RefreshGrid(null);
         }
 
-        public void RefreshGrid(List<int> requiredIds = null)
+        public void RefreshGrid(List<Guid> requiredIds = null)
         {
             var selectedIds = GetSelectedIds();
 
             dataGridView1.Rows.Clear();
 
-            List<WohnungHeaderEntity> headers;
-            List<WohnungDetailsEntity> details;
+            List<WohnungEntity> headers;
 
             using (var db = new WohnungDb())
             {
-                var query = db.WohnungHeaders.AsQueryable();
+                var query = db.Wohnungen.AsQueryable();
                 
                 if (requiredIds?.Any() == true)
                 {
@@ -136,18 +144,17 @@ namespace UI
                     if (wbsComboBox.SelectedIndex == 0)
                     {
                         //без WBS
-                        query = query.Where(p => !p.Details.Any(d => d.Wbs == true));
+                        query = query.Where(p => p.Wbs == null || p.Wbs == false);
                     }
                     if (rooms != null)
                     {
                         //кол-во комнат
-                        query = query.Where(p => !p.Details.Any() || p.Details.Any(d => d.Zimmer == null || d.Zimmer >= rooms.Value));
+                        query = query.Where(p => p.Zimmer == null || p.Zimmer >= rooms.Value);
                     }
                 }
 
                 headers = query.ToList();
                 var headerIds = headers.Select(p => p.Id).ToList();
-                details = db.WohnungDetails.Where(p => headerIds.Contains(p.WohnungHeaderId)).ToList();
             }
 
             var rows = new List<DataGridViewRow>();
@@ -163,19 +170,18 @@ namespace UI
 
             foreach (var header in headers)
             {
-                var detail = details.FirstOrDefault(p => p.WohnungHeaderId == header.Id);
                 dataGridView1.Rows.Add(header.Id,
                     header.WohnungId,
                     header.Provider,
-                    detail?.Zimmer?.ToString() ?? "",
-                    detail?.Flaeche?.ToString() ?? "",
-                    detail?.MieteWarm?.ToString() ?? "",
-                    formatBool(detail?.Wbs),
-                    detail?.Bezirk,
-                    detail?.Anschrift,
-                    detail?.Ueberschrift,
+                    header.Zimmer?.ToString() ?? "",
+                    header.Flaeche?.ToString() ?? "",
+                    header.MieteWarm?.ToString() ?? "",
+                    formatBool(header.Wbs),
+                    header.Bezirk,
+                    header.Anschrift,
+                    header.Ueberschrift,
                     header.Wichtigkeit,
-                    formatBool(detail?.Balkon),
+                    formatBool(header.Balkon),
                     header.Gesehen?.ToString("dd.MM.yyyy"),
                     "открыть");
             }
@@ -330,9 +336,9 @@ namespace UI
             loadingTimerValue.Text = diff;
         }
 
-        private List<int> GetIdsFromCurrentView()
+        private List<Guid> GetIdsFromCurrentView()
         {
-            var result = new List<int>();
+            var result = new List<Guid>();
 
             foreach (DataGridViewRow row in dataGridView1.Rows)
             {
@@ -342,16 +348,16 @@ namespace UI
             return result;
         }
 
-        private int GetId(DataGridViewRow row)
+        private Guid GetId(DataGridViewRow row)
         {
             var cellValue = row.Cells[IdColumn.Index].Value.ToString();
-            var id = int.Parse(cellValue);
+            var id = Guid.Parse(cellValue);
             return id;
         }
 
-        private List<int> GetSelectedIds()
+        private List<Guid> GetSelectedIds()
         {
-            var result = new List<int>();
+            var result = new List<Guid>();
 
             foreach (DataGridViewRow row in dataGridView1.Rows)
             {
@@ -375,7 +381,7 @@ namespace UI
 
             using (var db = new WohnungDb())
             {
-                var items = db.WohnungHeaders.Where(p => ids.Contains(p.Id) && p.Gesehen == null).ToList();
+                var items = db.Wohnungen.Where(p => ids.Contains(p.Id) && p.Gesehen == null).ToList();
                 foreach (var item in items)
                 {
                     item.Gesehen = DateTime.Today;
@@ -383,7 +389,7 @@ namespace UI
                 db.SaveChanges();
             }
 
-            RefreshGrid(ids);
+            RefreshGrid();
         }
 
         private void ShowProvidersRating()
@@ -430,13 +436,11 @@ namespace UI
                     return;
                 }
 
-                List<WohnungHeaderEntity> headers;
-                List<WohnungDetailsEntity> details;
+                List<WohnungEntity> headers;
 
                 using (var db = new WohnungDb())
                 {
-                    headers = db.WohnungHeaders.ToList();
-                    details = db.WohnungDetails.ToList();
+                    headers = db.Wohnungen.ToList();
                 }
 
                 var export = new List<WohnungExportItem>();
@@ -453,33 +457,25 @@ namespace UI
                         Gesehen = header.Gesehen,
                         Gemeldet = header.Gemeldet,
                         LoadDetailsTries = header.LoadDetailsTries,
-                        Details = false
+                        Details = true
                     };
 
+                    item.Ueberschrift = header.Ueberschrift;
+                    item.Bezirk = header.Bezirk;
+                    item.Anschrift = header.Anschrift;
+                    item.MieteKalt = header.MieteKalt;
+                    item.MieteWarm = header.MieteWarm;
+                    item.Etage = header.Etage;
+                    item.Etagen = header.Etagen;
+                    item.Zimmer = header.Zimmer;
+                    item.Flaeche = header.Flaeche;
+                    item.FreiAb = header.FreiAb;
+                    item.Beschreibung = header.Beschreibung;
+                    item.Wbs = header.Wbs;
+                    item.Balkon = header.Balkon;
+                    item.Keller = header.Keller;
+
                     export.Add(item);
-
-                    var detail = details.FirstOrDefault(p => p.WohnungHeaderId == header.Id);
-                    if (detail == null)
-                    {
-                        continue;
-                    }
-
-                    item.Details = true;
-
-                    item.Ueberschrift = detail.Ueberschrift;
-                    item.Bezirk = detail.Bezirk;
-                    item.Anschrift = detail.Anschrift;
-                    item.MieteKalt = detail.MieteKalt;
-                    item.MieteWarm = detail.MieteWarm;
-                    item.Etage = detail.Etage;
-                    item.Etagen = detail.Etagen;
-                    item.Zimmer = detail.Zimmer;
-                    item.Flaeche = detail.Flaeche;
-                    item.FreiAb = detail.FreiAb;
-                    item.Beschreibung = detail.Beschreibung;
-                    item.Wbs = detail.Wbs;
-                    item.Balkon = detail.Balkon;
-                    item.Keller = detail.Keller;
                 }
 
                 var fileName = saveFileDialog1.FileName;
@@ -512,7 +508,7 @@ namespace UI
                 {
                     foreach (var item in import)
                     {
-                        var dbHeaders = db.WohnungHeaders.ToList();
+                        var dbHeaders = db.Wohnungen.ToList();
                         var dbItem = dbHeaders.FirstOrDefault(p => p.Provider == item.Provider && p.WohnungId == item.WohnungId);
                         if (dbItem != null)
                         {
@@ -521,7 +517,7 @@ namespace UI
 
                         imported++;
 
-                        var header = new WohnungHeaderEntity
+                        var header = new WohnungEntity
                         {
                             Provider = item.Provider,
                             WohnungId = item.WohnungId,
@@ -531,12 +527,7 @@ namespace UI
                             Geladen = item.Geladen,
                             Gesehen = item.Gesehen,
                             Gemeldet = item.Gemeldet,
-                            LoadDetailsTries = item.LoadDetailsTries
-                        };
-
-                        var details = new WohnungDetailsEntity
-                        {
-                            WohnungHeader = header,
+                            LoadDetailsTries = item.LoadDetailsTries,
 
                             Ueberschrift = item.Ueberschrift,
                             Bezirk = item.Bezirk,
@@ -551,14 +542,15 @@ namespace UI
                             Beschreibung = item.Beschreibung,
                             Wbs = item.Wbs,
                             Balkon = item.Balkon,
-                            Keller = item.Keller,
+                            Keller = item.Keller
                         };
 
-                        db.WohnungHeaders.Add(header);
-                        db.WohnungDetails.Add(details);
+                        db.Wohnungen.Add(header);
                     }
 
                     db.SaveChanges();
+
+                    MessageBox.Show($"{imported} записей импортировано");
                 }
             }
             catch (Exception ex)
@@ -613,7 +605,7 @@ namespace UI
 
                     using (var db = new WohnungDb())
                     {
-                        var entry = db.WohnungHeaders.FirstOrDefault(p => p.Id == id);
+                        var entry = db.Wohnungen.FirstOrDefault(p => p.Id == id);
                         if (entry != null)
                         {
                             entry.Gesehen = DateTime.Now;
@@ -654,10 +646,10 @@ namespace UI
         private void copyIdToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var ids = GetSelectedIds();
-            List<WohnungHeaderEntity> items;
+            List<WohnungEntity> items;
             using (var db = new WohnungDb())
             {
-                items = db.WohnungHeaders.Where(p => ids.Contains(p.Id)).ToList();
+                items = db.Wohnungen.Where(p => ids.Contains(p.Id)).ToList();
             }
             var msg = string.Join("; ", items.Select(p => $"{p.Provider} {p.WohnungId}"));
             Clipboard.SetText(msg);

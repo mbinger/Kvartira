@@ -14,13 +14,13 @@ namespace UI
 {
     public partial class Details : Form
     {
-        private readonly int? id;
+        private readonly Guid? id;
         private readonly Form1 parent;
         private const string dtFormat = "dd.MM.yyyy";
         private CultureInfo culture = new CultureInfo("en-US");
         private Color colorError = Color.LightCoral;
 
-        public Details(int? id = null, Form1 parent = null)
+        public Details(Guid? id = null, Form1 parent = null)
         {
             this.id = id;
             this.parent = parent;
@@ -39,40 +39,36 @@ namespace UI
 
         private void BindToForm()
         {
-            WohnungHeaderEntity header;
-            WohnungDetailsEntity details;
+            WohnungEntity w;
             using (var db = new WohnungDb())
             {
-                header = db.WohnungHeaders.Single(p => p.Id == id.Value);
-
-                var detailsList = db.WohnungDetails.Where(p => p.WohnungHeaderId == header.Id).ToList();
-                details = detailsList.SingleOrDefault();
+                w = db.Wohnungen.Single(p => p.Id == id.Value);
             }
 
-            ProviderTb.Text = header.Provider;
-            IdTb.Text = header.WohnungId;
-            GeladenTb.Text = header.Geladen.ToString(dtFormat);
-            GesehenTb.Text = header.Gesehen?.ToString(dtFormat);
-            GemeldetTb.Text = header.Gemeldet?.ToString(dtFormat);
-            WichtigkeitTb.Text = header.Wichtigkeit.ToString();
-            TriesCountTb.Text = header.LoadDetailsTries.ToString();
-            SucheShortTb.Text = header.SucheShort;
-            SucheDetailsTb.Text = header.SucheDetails;
+            ProviderTb.Text = w.Provider;
+            IdTb.Text = w.WohnungId;
+            GeladenTb.Text = w.Geladen.ToString(dtFormat);
+            GesehenTb.Text = w.Gesehen?.ToString(dtFormat);
+            GemeldetTb.Text = w.Gemeldet?.ToString(dtFormat);
+            WichtigkeitTb.Text = w.Wichtigkeit.ToString();
+            TriesCountTb.Text = w.LoadDetailsTries.ToString();
+            SucheShortTb.Text = w.SucheShort;
+            SucheDetailsTb.Text = w.SucheDetails;
 
-            UeberschriftTb.Text = details?.Ueberschrift;
-            BeschreibungTb.Text = details?.Beschreibung;
-            AnschriftTb.Text = details?.Anschrift;
-            BezirkTb.Text = details?.Bezirk;
-            MieteWarmTb.Text = details?.MieteWarm?.ToString(culture);
-            MieteKaltTb.Text = details?.MieteKalt?.ToString(culture);
-            ZimmerTb.Text = details?.Zimmer?.ToString(culture);
-            FlaecheTb.Text = details?.Flaeche?.ToString(culture);
-            EtageTb.Text = details?.Etage?.ToString(culture);
-            EtagenTb.Text = details?.Etagen?.ToString(culture);
-            BindBoolToCb(WbsCb, details?.Wbs);
-            BindBoolToCb(BalkonCb, details?.Balkon);
-            BindBoolToCb(KellerCb, details?.Keller);
-            FreiAbTb.Text = details?.FreiAb?.ToString(dtFormat);
+            UeberschriftTb.Text = w.Ueberschrift;
+            BeschreibungTb.Text = w.Beschreibung;
+            AnschriftTb.Text = w.Anschrift;
+            BezirkTb.Text = w.Bezirk;
+            MieteWarmTb.Text = w.MieteWarm?.ToString(culture);
+            MieteKaltTb.Text = w.MieteKalt?.ToString(culture);
+            ZimmerTb.Text = w.Zimmer?.ToString(culture);
+            FlaecheTb.Text = w.Flaeche?.ToString(culture);
+            EtageTb.Text = w.Etage?.ToString(culture);
+            EtagenTb.Text = w.Etagen?.ToString(culture);
+            BindBoolToCb(WbsCb, w.Wbs);
+            BindBoolToCb(BalkonCb, w.Balkon);
+            BindBoolToCb(KellerCb, w.Keller);
+            FreiAbTb.Text = w.FreiAb?.ToString(dtFormat);
 
             //todo: add new fileds here
         }
@@ -81,40 +77,31 @@ namespace UI
         {
             using (var db = new WohnungDb())
             {
-                var header = db.WohnungHeaders.Single(p => p.Id == id.Value);
-                var details = db.WohnungDetails.SingleOrDefault(p => p.WohnungHeaderId == id.Value);
-                if (details == null)
-                {
-                    details = new WohnungDetailsEntity
-                    {
-                        WohnungHeaderId = id.Value
-                    };
-                    db.WohnungDetails.Add(details);
-                }
+                var w = db.Wohnungen.Single(p => p.Id == id.Value);
 
                 var errors = 0;
 
-                header.Gemeldet = ParseDate(GemeldetTb, ref errors);
-                header.Gesehen = ParseDate(GesehenTb, ref errors);
-                header.Wichtigkeit = ParseInt(WichtigkeitTb, ref errors) ?? 0;
-                header.LoadDetailsTries = ParseInt(TriesCountTb, ref errors) ?? 0;
-                header.SucheShort = GetStringFromTb(SucheShortTb);
-                header.SucheDetails = GetStringFromTb(SucheDetailsTb);
+                w.Gemeldet = ParseDate(GemeldetTb, ref errors);
+                w.Gesehen = ParseDate(GesehenTb, ref errors);
+                w.Wichtigkeit = ParseInt(WichtigkeitTb, ref errors) ?? 0;
+                w.LoadDetailsTries = ParseInt(TriesCountTb, ref errors) ?? 0;
+                w.SucheShort = GetStringFromTb(SucheShortTb);
+                w.SucheDetails = GetStringFromTb(SucheDetailsTb);
 
-                details.Ueberschrift = GetStringFromTb(UeberschriftTb);
-                details.Beschreibung = GetStringFromTb(BeschreibungTb);
-                details.Anschrift = GetStringFromTb(AnschriftTb);
-                details.Bezirk = GetStringFromTb(BezirkTb);
-                details.MieteWarm = ParseDecimal(MieteWarmTb, ref errors);
-                details.MieteKalt = ParseDecimal(MieteKaltTb, ref errors);
-                details.Zimmer = ParseInt(ZimmerTb, ref errors);
-                details.Flaeche = ParseDecimal(FlaecheTb, ref errors);
-                details.Etage = ParseInt(EtageTb, ref errors);
-                details.Etagen = ParseInt(EtagenTb, ref errors);
-                details.Wbs = GetBoolFromCb(WbsCb);
-                details.Balkon = GetBoolFromCb(BalkonCb);
-                details.Keller = GetBoolFromCb(KellerCb);
-                details.FreiAb = ParseDate(FreiAbTb, ref errors);
+                w.Ueberschrift = GetStringFromTb(UeberschriftTb);
+                w.Beschreibung = GetStringFromTb(BeschreibungTb);
+                w.Anschrift = GetStringFromTb(AnschriftTb);
+                w.Bezirk = GetStringFromTb(BezirkTb);
+                w.MieteWarm = ParseDecimal(MieteWarmTb, ref errors);
+                w.MieteKalt = ParseDecimal(MieteKaltTb, ref errors);
+                w.Zimmer = ParseInt(ZimmerTb, ref errors);
+                w.Flaeche = ParseDecimal(FlaecheTb, ref errors);
+                w.Etage = ParseInt(EtageTb, ref errors);
+                w.Etagen = ParseInt(EtagenTb, ref errors);
+                w.Wbs = GetBoolFromCb(WbsCb);
+                w.Balkon = GetBoolFromCb(BalkonCb);
+                w.Keller = GetBoolFromCb(KellerCb);
+                w.FreiAb = ParseDate(FreiAbTb, ref errors);
 
                 //todo: add new fileds here
 
@@ -307,13 +294,11 @@ namespace UI
 
             using (var db = new WohnungDb())
             {
-                var details = db.WohnungDetails.Where(p => p.WohnungHeaderId == id.Value).ToList();
-                foreach (var item in details)
+                var wList = db.Wohnungen.Where(p => p.Id == id.Value).ToList();
+                foreach (var item in wList)
                 {
-                    db.WohnungDetails.Remove(item);
+                    db.Wohnungen.Remove(item);
                 }
-                var header = db.WohnungHeaders.Single(p => p.Id == id.Value);
-                db.WohnungHeaders.Remove(header);
                 db.SaveChanges();
             }
 

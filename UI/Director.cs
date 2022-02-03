@@ -23,7 +23,7 @@ namespace UI
             this.log = log;
         }
 
-        private void BindCardToEntity(WohnungCard card, WohnungDetailsEntity entity)
+        private void BindCardToEntity(WohnungCard card, WohnungEntity entity)
         {
             entity.Ueberschrift = card.Header;
             entity.Anschrift = card.Anschrift;
@@ -116,7 +116,7 @@ namespace UI
 
                     using (var db = new WohnungDb())
                     {
-                        var existingIds = db.WohnungHeaders.Where(p => p.Provider == provider.Name).Select(p => p.WohnungId).ToList();
+                        var existingIds = db.Wohnungen.Where(p => p.Provider == provider.Name).Select(p => p.WohnungId).ToList();
                         var newIds = headers.WohnungIds.Where(p => !existingIds.Contains(p)).ToList();
                         newIdsGlobal.AddRange(newIds);
 
@@ -124,7 +124,7 @@ namespace UI
                         var now = DateTime.Now;
                         foreach (var newHeader in newIds)
                         {
-                            var header = new WohnungHeaderEntity
+                            var header = new WohnungEntity
                             {
                                 WohnungId = newHeader,
                                 Provider = search.ProviderName,
@@ -136,7 +136,7 @@ namespace UI
                                 Gesehen = null,
                                 LoadDetailsTries = 0
                             };
-                            db.WohnungHeaders.Add(header);
+                            db.Wohnungen.Add(header);
                         }
 
                         var providerHealthEntry = db.ProviderHealthLogs.FirstOrDefault(p => p.ProviderName == provider.Name);
@@ -185,7 +185,7 @@ namespace UI
 
             using (var db = new WohnungDb())
             {
-                var header = db.WohnungHeaders.FirstOrDefault(p => p.Provider == providerName && p.WohnungId == wohnungId);
+                var header = db.Wohnungen.FirstOrDefault(p => p.Provider == providerName && p.WohnungId == wohnungId);
                 if (header == null)
                 {
                     log.Write($"TryReloadDetails: WohnungHeader '{providerName}' '{wohnungId}' not found");
@@ -202,7 +202,7 @@ namespace UI
 
             using (var db = new WohnungDb())
             {
-                var header = db.WohnungHeaders.FirstOrDefault(p => p.Provider == providerName && p.WohnungId == wohnungId);
+                var header = db.Wohnungen.FirstOrDefault(p => p.Provider == providerName && p.WohnungId == wohnungId);
                 if (header == null)
                 {
                     log.Write($"TryReloadDetails: WohnungHeader '{providerName}' '{wohnungId}' not found after load");
@@ -210,17 +210,7 @@ namespace UI
                 }
                 header.LoadDetailsTries++;
 
-                var details = db.WohnungDetails.SingleOrDefault(p => p.WohnungHeaderId == header.Id);
-                if (details == null)
-                {
-                    details = new WohnungDetailsEntity
-                    {
-                        WohnungHeaderId = header.Id
-                    };
-                    db.WohnungDetails.Add(details);
-                }
-
-                BindCardToEntity(card, details);
+                BindCardToEntity(card, header);
 
                 db.SaveChanges();
             }
@@ -230,7 +220,7 @@ namespace UI
 
         private class ProviderWohnungId
         {
-            public int HeaderId { get; set; }
+            public Guid HeaderId { get; set; }
             public string Provider { get; set; }
             public string WohnungId { get; set; }
         }
@@ -241,8 +231,8 @@ namespace UI
             List<ProviderWohnungId> ids;
             using (var db = new WohnungDb())
             {
-                ids = db.WohnungHeaders
-                    .Where(p => p.LoadDetailsTries < 3 && !p.Details.Any())
+                ids = db.Wohnungen
+                    .Where(p => p.LoadDetailsTries < 3 && p.SucheDetails == null)
                     .Select(p => new ProviderWohnungId
                     {
                         HeaderId = p.Id,
@@ -286,12 +276,8 @@ namespace UI
                         {
                             if (card != null)
                             {
-                                var detailsEntity = new WohnungDetailsEntity
-                                {
-                                    WohnungHeaderId = id.HeaderId,
-                                };
-                                BindCardToEntity(card, detailsEntity);
-                                db.WohnungDetails.Add(detailsEntity);
+                                var header = db.Wohnungen.Single(p => p.Id == id.HeaderId);
+                                BindCardToEntity(card, header);
 
                                 await db.SaveChangesAsync();
 
@@ -315,7 +301,7 @@ namespace UI
                             }
                             else
                             {
-                                var header = db.WohnungHeaders.Single(p => p.Id == id.HeaderId);
+                                var header = db.Wohnungen.Single(p => p.Id == id.HeaderId);
                                 header.LoadDetailsTries++;
                                 await db.SaveChangesAsync();
                             }
